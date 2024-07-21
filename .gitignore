@@ -1,0 +1,7 @@
+.idea/
+.netlify/
+.svelte-kit/
+.turbo/
+build/
+dist/
+node_modules/

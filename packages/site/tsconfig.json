@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "allowUnusedLabels": false,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "plugins": [{
+      "name": "typescript-svelte-plugin"
+    }],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strict": true,
+    "target": "ESNext",
+    "verbatimModuleSyntax": true
+  },
+  "extends": "./.svelte-kit/tsconfig.json",
+  "include": [
+    "src/**/*.svelte",
+    "src/**/*.ts",
+    "vite.config.ts"
+  ]
+}

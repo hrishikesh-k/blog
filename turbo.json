@@ -1,0 +1,38 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "@hrishikeshk/blog#build": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/blog#check"
+      ],
+      "outputs": [
+        "build/**"
+      ]
+    },
+    "@hrishikeshk/blog#dev": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/blog#sync"
+      ]
+    },
+    "@hrishikeshk/blog#check": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/blog#sync"
+      ]
+    },
+    "@hrishikeshk/sveltekit-adapter-netlify#build": {
+      "cache": false,
+      "outputs": [
+        "dist/**"
+      ]
+    },
+    "@hrishikeshk/blog#sync": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/sveltekit-adapter-netlify#build"
+      ]
+    }
+  }
+}

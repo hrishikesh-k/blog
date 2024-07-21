@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "@types/node": "20.14.10",
+    "turbo": "2.0.9",
+    "typescript": "5.5.3"
+  },
+  "name": "@hrishikeshk/sveltekit-workspace",
+  "packageManager": "npm@10.8.2",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
