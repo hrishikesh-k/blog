@@ -3,6 +3,7 @@
 *.html text eol=lf
 *.js text eol=lf
 *.json text eol=lf
+*.lock text eol=lf
 *.svelte text eol=lf
 *.toml text eol=lf
 *.ts text eol=lf
