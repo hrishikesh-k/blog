@@ -118,8 +118,12 @@ export default async function(req, context) {
 export const config = {
   excludedPattern: ${JSON.stringify([
     `${path_to_regex('/.netlify/*')}`,
-    `${path_to_regex('/favicon.ico')}`
-  ].concat(builder.routes.filter(r => r.prerender && r.id !== '/').map(r => {
+    `${path_to_regex('/favicon.ico')}`,
+    `${path_to_regex(`${builder.getAppPath()}/immutable/*`)}`
+  ].concat(builder.routes.filter(r => r.prerender).map(r => {
+    if (r.id === '/') {
+      return path_to_regex('/', '(([Hh][Oo][Mm][Ee]|[Ii][Nn][Dd][Ee][Xx])\\.[Hh][Tt][Mm][Ll]?)?')
+    }
     return path_to_regex(r.id, '((\\.[Hh][Tt][Mm][Ll]?)|\\/|(\\/(([Ii][Nn][Dd][Ee][Xx])|([Hh][Oo][Mm][Ee])))\\.[Hh][Tt][Mm][Ll]?)?')
   }).flat()).concat(options.excludedPath || []))},
   generator: '${generator}',
