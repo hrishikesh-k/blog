@@ -76,6 +76,28 @@ export function adapterNetlifyEdgeFunctions(options : Partial<Pick<EdgeFunctions
       builder.log.info('adapter is using Netlify Edge Functions')
       await init(builder)
       const ntl_edge_functions_dir = join(ntl_frameworks_api_dir, 'edge-functions')
+      function path_to_regex(path : string, suffix? : string) {
+        return [
+          '^',
+          path.split('').map(s => {
+            if (/[A-Za-z]/.test(s)) {
+              return `[${s.toUpperCase()}${s.toLowerCase()}]`
+            }
+            switch (s) {
+              case '/':
+                return '\\/'
+              case '.':
+                return '\\.'
+              case '*':
+                return '.*'
+              default:
+                return s
+            }
+          }).join(''),
+          suffix,
+          '$'
+        ].join('')
+      }
       const efn = `import {Server} from '${join(builder.getServerDirectory(), 'index.js')}'
 const server = new Server(${builder.generateManifest({
   relativePath: './'
@@ -95,22 +117,15 @@ export default async function(req, context) {
 }
 export const config = {
   excludedPattern: ${JSON.stringify([
-    '^\\/\\.netlify\\/.*$'
+    `${path_to_regex('/.netlify/*')}`,
+    `${path_to_regex('/favicon.ico')}`
   ].concat(builder.routes.filter(r => r.prerender && r.id !== '/').map(r => {
-    return '^\\/' + r.id.slice(1).split('').map(s => {
-      if (/[A-Za-z]/.test(s)) {
-        return `[${s.toUpperCase()}${s.toLowerCase()}]`
-      }
-      if (s === '/') {
-        return '\\/'
-      }
-      return s
-    }).join('') + '((\\.[Hh][Tt][Mm][Ll]?)|\\/|(\\/(([Ii][Nn][Dd][Ee][Xx])|([Hh][Oo][Mm][Ee])))\\.[Hh][Tt][Mm][Ll]?)?$'
+    return path_to_regex(r.id, '((\\.[Hh][Tt][Mm][Ll]?)|\\/|(\\/(([Ii][Nn][Dd][Ee][Xx])|([Hh][Oo][Mm][Ee])))\\.[Hh][Tt][Mm][Ll]?)?')
   }).flat()).concat(options.excludedPath || []))},
   generator: '${generator}',
   name: '${fn_name}',
   onError: ${JSON.stringify(options.onError || undefined)},
-  pattern: '^\\/.*$',
+  pattern: ${JSON.stringify(path_to_regex('/*'))},
   rateLimit: ${JSON.stringify(options.rateLimit || undefined)}
 }`
       /*
