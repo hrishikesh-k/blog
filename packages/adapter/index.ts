@@ -94,34 +94,23 @@ export default async function(req, context) {
   })
 }
 export const config = {
-  excludedPath: ${JSON.stringify([
-    '/.netlify/*',
-    `/${builder.getAppPath()}/immutable/*`
-  ].concat(builder.routes.filter(r => r.prerender).map(r => {
-    if (r.id === '/') {
-      return [
-        '/',
-        '/home.htm',
-        '/home.html',
-        '/index.htm',
-        '/index.html'
-      ]
-    }
-    return [
-      r.id,
-      `${r.id}.htm`,
-      `${r.id}.html`,
-      `${r.id}/`,
-      `${r.id}/home.htm`,
-      `${r.id}/home.html`,
-      `${r.id}/index.htm`,
-      `${r.id}/index.html`
-    ]
+  excludedPattern: ${JSON.stringify([
+    '^\\/\\.netlify\\/.*$'
+  ].concat(builder.routes.filter(r => r.prerender && r.id !== '/').map(r => {
+    return '^\\/' + r.id.slice(1).split('').map(s => {
+      if (/[A-Za-z]/.test(s)) {
+        return `[${s.toUpperCase()}${s.toLowerCase()}]`
+      }
+      if (s === '/') {
+        return '\\/'
+      }
+      return s
+    }).join('') + '((\\.[Hh][Tt][Mm][Ll]?)|\\/|(\\/(([Ii][Nn][Dd][Ee][Xx])|([Hh][Oo][Mm][Ee])))\\.[Hh][Tt][Mm][Ll]?)?$'
   }).flat()).concat(options.excludedPath || []))},
   generator: '${generator}',
   name: '${fn_name}',
   onError: ${JSON.stringify(options.onError || undefined)},
-  path: '/*',
+  pattern: '^\\/.*$',
   rateLimit: ${JSON.stringify(options.rateLimit || undefined)}
 }`
       /*

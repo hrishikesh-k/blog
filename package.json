@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "@sveltejs/kit": "2.5.18",
-    "@types/node": "20.14.11",
+    "@types/node": "20.14.12",
     "turbo": "2.0.9",
-    "typescript": "5.5.3"
+    "typescript": "5.5.4"
   },
   "name": "@hrishikeshk/sveltekit-workspace",
   "packageManager": "npm@10.8.2",
