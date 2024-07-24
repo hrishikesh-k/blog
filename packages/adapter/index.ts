@@ -98,6 +98,7 @@ export function adapterNetlifyEdgeFunctions(options : Partial<Pick<EdgeFunctions
           '$'
         ].join('')
       }
+      console.log(`${builder.getAppPath()}/immutable/*`)
       const efn = `import {Server} from '${join(builder.getServerDirectory(), 'index.js')}'
 const server = new Server(${builder.generateManifest({
   relativePath: './'
@@ -119,7 +120,7 @@ export const config = {
   excludedPattern: ${JSON.stringify([
     `${path_to_regex('/.netlify/*')}`,
     `${path_to_regex('/favicon.ico')}`,
-    `${path_to_regex(`${builder.getAppPath()}/immutable/*`)}`
+    `${path_to_regex(`/${builder.getAppPath()}/immutable/*`)}`
   ].concat(builder.routes.filter(r => r.prerender).map(r => {
     if (r.id === '/') {
       return path_to_regex('/', '(([Hh][Oo][Mm][Ee]|[Ii][Nn][Dd][Ee][Xx])\\.[Hh][Tt][Mm][Ll]?)?')
