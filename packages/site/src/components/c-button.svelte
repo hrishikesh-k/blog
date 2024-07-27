@@ -31,7 +31,7 @@
     'hover:after:scale-110',
     'hover:text-sky-400',
     'items-center',
-    'justify-between',
+    'justify-center',
     'min-h-8',
     'min-w-8',
     'no-underline',
