@@ -1,5 +1,4 @@
 import type {Config} from 'tailwindcss'
-// @ts-ignore - not an error, IntelliJ doesn't like this
 import plugin from 'tailwindcss/plugin'
 import type {PluginAPI} from 'tailwindcss/types/config'
 export default {
@@ -240,7 +239,7 @@ export default {
           const cloned_obj = o
           cloned_obj[k] = k
           return cloned_obj
-        }, {})
+        }, {} as Record<string, string>)
       })
     }),
     /* animate-timing-function */
