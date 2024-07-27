@@ -1,4 +1,5 @@
 import type {Config} from 'tailwindcss'
+// @ts-ignore - not an error, IntelliJ doesn't like this
 import plugin from 'tailwindcss/plugin'
 import type {PluginAPI} from 'tailwindcss/types/config'
 export default {

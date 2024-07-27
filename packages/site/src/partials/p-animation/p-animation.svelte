@@ -302,7 +302,7 @@
     y: 233.28
   }]
 </script>
-<svg class="col-span-1 md:col-span-2" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg class="col-span-1 lg:col-span-1 md:col-span-2" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
     <linearGradient gradientTransform="translate(-36.46 -85.97) rotate(45) scale(1 -1)" gradientUnits="userSpaceOnUse" id="g-supabase" x1="544.42" x2="556.01" y1="90.97" y2="86.11">
       <stop offset="0" stop-color="#249361"/>

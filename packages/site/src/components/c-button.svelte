@@ -6,19 +6,10 @@
   export let icon : TCIconName = ''
   export let label = ''
   export let link = ''
+  export let intent :'filled' | 'ghost' = 'ghost'
   export let title = ''
   export let type : 'button' | 'reset' | 'submit' = 'button'
   const btn_class = cva([
-    'after:absolute',
-    'after:duration-300',
-    'after:h-full',
-    'after:left-0',
-    'after:rounded',
-    'after:scale-75',
-    'after:top-0',
-    'after:w-full',
-    'after:-z-10',
-    'bg-transparent',
     'border-0',
     'box-border',
     'cursor-pointer',
@@ -27,19 +18,42 @@
     'font-bold',
     'font-inherit',
     'gap-x-1',
-    'hover:after:bg-sky-900',
-    'hover:after:scale-110',
     'hover:text-sky-400',
     'items-center',
     'justify-center',
     'min-h-8',
     'min-w-8',
     'no-underline',
-    'p-1.5',
-    'relative',
-    'text-inherit',
-    'z-10'
-  ])
+    'text-inherit'
+  ], {
+    variants: {
+      intent: {
+        filled: [
+          'bg-sky-800',
+          'px-3',
+          'py-2',
+          'rounded'
+        ],
+        ghost: [
+          'after:absolute',
+          'after:duration-300',
+          'after:h-full',
+          'after:left-0',
+          'after:rounded',
+          'after:scale-75',
+          'after:top-0',
+          'after:w-full',
+          'after:-z-10',
+          'bg-transparent',
+          'hover:after:bg-sky-900',
+          'hover:after:scale-110',
+          'p-1.5',
+          'relative',
+          'z-10'
+        ]
+      }
+    }
+  })
   let link_external = false
   let props : {
     'aria-label'? : string
@@ -107,7 +121,7 @@
     props = computed_props
   }
 </script>
-<svelte:element class={btn_class()} {...props} this="{link.length ? 'a' : element ? element : 'button'}">
+<svelte:element class={btn_class({intent})} {...props} this="{link.length ? 'a' : element ? element : 'button'}">
   {#if icon.length}
     <CIcon name={icon}/>
   {/if}
