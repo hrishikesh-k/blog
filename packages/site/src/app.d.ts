@@ -1,12 +1,14 @@
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
+import type {ILazyLoadInstance} from 'vanilla-lazyload'
 declare global {
-  namespace App {
-    // interface Error {}
-    // interface Locals {}
-    // interface PageData {}
-    // interface PageState {}
-    // interface Platform {}
+  declare module '*?meta' {
+    export default {} as {
+      height : number
+      src : string
+      width : number
+    }
+  }
+  namespace App {}
+  interface Window {
+    ll : ILazyLoadInstance
   }
 }
-export {}

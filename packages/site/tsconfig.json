@@ -4,6 +4,7 @@
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "allowUnusedLabels": false,
+    "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "lib": [

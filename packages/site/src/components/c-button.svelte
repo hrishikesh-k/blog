@@ -1,5 +1,6 @@
 <script lang="ts">
   import CIcon from '~/components/c-icon.svelte'
+  import {cva} from 'class-variance-authority'
   import type {TCIconName} from '~/utils/types.ts'
   export let element : 'div' | null = null
   export let icon : TCIconName = ''
@@ -7,6 +8,38 @@
   export let link = ''
   export let title = ''
   export let type : 'button' | 'reset' | 'submit' = 'button'
+  const btn_class = cva([
+    'after:absolute',
+    'after:duration-300',
+    'after:h-full',
+    'after:left-0',
+    'after:rounded',
+    'after:scale-75',
+    'after:top-0',
+    'after:w-full',
+    'after:-z-10',
+    'bg-transparent',
+    'border-0',
+    'box-border',
+    'cursor-pointer',
+    'duration-300',
+    'flex',
+    'font-bold',
+    'font-inherit',
+    'gap-x-1',
+    'hover:after:bg-sky-900',
+    'hover:after:scale-110',
+    'hover:text-sky-400',
+    'items-center',
+    'justify-between',
+    'min-h-8',
+    'min-w-8',
+    'no-underline',
+    'p-1.5',
+    'relative',
+    'text-inherit',
+    'z-10'
+  ])
   let link_external = false
   let props : {
     'aria-label'? : string
@@ -74,7 +107,7 @@
     props = computed_props
   }
 </script>
-<svelte:element class="ha9479c80a2d" {...props} this="{link.length ? 'a' : element ? element : 'button'}">
+<svelte:element class={btn_class()} {...props} this="{link.length ? 'a' : element ? element : 'button'}">
   {#if icon.length}
     <CIcon name={icon}/>
   {/if}
@@ -82,48 +115,6 @@
     <span>{label}</span>
   {/if}
   {#if link_external}
-    <CIcon name="open_in_new" size={3}/>
+    <CIcon name="arrow-up-right-from-square" size={3}/>
   {/if}
 </svelte:element>
-<style>
-  .ha9479c80a2d {
-    align-items: center;
-    background-color: transparent;
-    border-width: 0;
-    box-sizing: border-box;
-    color: inherit;
-    column-gap: 0.25rem;
-    cursor: pointer;
-    display: flex;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: 700;
-    justify-content: center;
-    min-height: 2rem;
-    min-width: 2rem;
-    padding: 0.375rem;
-    position: relative;
-    text-decoration-line: none;
-    transition-duration: 250ms;
-    z-index: 1;
-    &:after {
-      border-radius: 0.25rem;
-      content: '';
-      height: 100%;
-      left: 0;
-      position: absolute;
-      transform: scale(0.75);
-      top: 0;
-      transition-duration: 250ms;
-      width: 100%;
-      z-index: -1;
-    }
-    &:hover {
-      color: #38bdf8;
-      &:after {
-        background-color: #0c4a6e;
-        transform: scale(1.125);
-      }
-    }
-  }
-</style>
