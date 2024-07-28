@@ -1,7 +1,7 @@
 import {cwd} from 'node:process'
 import type {EntryGenerator, PageServerLoad} from './$types'
 import {join} from 'node:path'
-import {NOTION_API_KEY} from '$env/static/private'
+import {NETLIFY_API_KEY, NOTION_API_KEY, SITE_ID} from '$env/static/private'
 import {readFileSync, writeFileSync} from 'node:fs'
 import wretch from 'wretch'
 
@@ -23,6 +23,18 @@ type type_notion_block_code<T extends string> = type_notion_block_text<'code'> &
 
 type type_notion_block_heading<T extends 1 | 2 | 3> = type_notion_block_text<`heading_${T}`> & {
   is_toggleable : boolean
+}
+
+type type_notion_block_image = {
+  image : {
+    caption: []
+    file : {
+      expiry_time : string
+      url : string
+    }
+    type : 'file'
+  }
+  type : 'image'
 }
 
 type type_notion_block_paragraph = type_notion_block_text<'paragraph'>
@@ -117,107 +129,7 @@ type type_notion_user = {
   object : 'user'
 }
 
-const entries_path = join(cwd(), '.svelte-kit/entries.json')
-
-export const load : PageServerLoad = async event => {
-
-  let posts : Array<{
-    id : string
-    slug : string
-  }>
-  let required_post_content : type_notion_res<'block', {
-    has_children : boolean
-    object : 'block'
-    parent : {
-      page_id : string
-      type : 'page_id'
-    }
-  } & type_notion_block_code<'typescript'> | type_notion_block_heading<1> | type_notion_block_heading<2> | type_notion_block_heading<3> | type_notion_block_paragraph>
-  let required_post_info : type_notion_page
-
-  try {
-    posts = JSON.parse(readFileSync(entries_path, 'utf-8'))
-  } catch {
-    throw new Error('failed to read entries')
-  }
-
-  const required_post = posts.find(p => p.slug === event.params.slug)
-
-  if (!required_post) {
-    throw new Error('failed to find post in entries')
-  }
-
-  try {
-    required_post_content = await notion.get(`/blocks/${required_post.id}/children`).json()
-  } catch {
-    throw new Error('failed to fetch post content')
-  }
-
-  try {
-    required_post_info = await notion.get(`/pages/${required_post.id}`).json<type_notion_page>()
-  } catch {
-    throw new Error('failed to fetch post info')
-  }
-
-  return {
-    post: {
-      content: required_post_content.results.map(c => {
-        if ('code' in c) {
-          return {
-            language : c.code.language,
-            text: c.code.rich_text[0].plain_text,
-            type: 'code'
-          }
-        }
-        if ('heading_1' in c) {
-          return {
-            level: 1,
-            text: c.heading_1.rich_text[0].plain_text,
-            type: 'heading',
-          }
-        }
-        if ('heading_2' in c) {
-          return {
-            level: 2,
-            text: c.heading_2.rich_text[0].plain_text,
-            type: 'heading',
-          }
-        }
-        if ('heading_3' in c) {
-          return {
-            level: 2,
-            text: c.heading_3.rich_text[0].plain_text,
-            type: 'heading',
-          }
-        }
-        if ('paragraph' in c && c.paragraph.rich_text.length) {
-          return {
-            text: c.paragraph.rich_text[0].plain_text,
-            type: 'paragraph'
-          }
-        }
-      }).filter(Boolean) as Array<{
-        text : string
-        type : 'paragraph'
-      } & {
-        language : 'typescript'
-        type : 'code'
-      } | {
-        level : 1 | 2 | 3
-        type : 'heading'
-      }>,
-      id: required_post_info.id,
-      title: required_post_info.properties.Title.title[0].plain_text
-    }
-  }
-}
-
-const notion = wretch('https://api.notion.com/v1').auth(`Bearer ${NOTION_API_KEY}`).headers({
-  'notion-version': '2022-06-28'
-})
-
-export async function entries() : Promise<ReturnType<EntryGenerator>> {
-
+export const entries : EntryGenerator = async () => {
   let all_posts : type_notion_res<'page_or_database', Pick<type_notion_page, 'cover' | 'icon' | 'object' | 'parent' | 'properties' | 'public_url' | 'url'>>
   try {
     all_posts = await notion.post(null, '/databases/ee93ad0cead84102868aae5665d8d2d1/query').json()
@@ -252,3 +164,119 @@ export async function entries() : Promise<ReturnType<EntryGenerator>> {
 
   return slugs
 }
+
+const entries_path = join(cwd(), '.svelte-kit/entries.json')
+
+export const load : PageServerLoad = async event => {
+
+  let posts : Array<{
+    id : string
+    slug : string
+  }>
+  let required_post_content : type_notion_res<'block', {
+    has_children : boolean
+    object : 'block'
+    parent : {
+      page_id : string
+      type : 'page_id'
+    }
+  } & type_notion_block_code<'typescript'> | type_notion_block_heading<1> | type_notion_block_heading<2> | type_notion_block_heading<3> | type_notion_block_image | type_notion_block_paragraph>
+  let required_post_info : type_notion_page
+
+  try {
+    posts = JSON.parse(readFileSync(entries_path, 'utf-8'))
+  } catch {
+    throw new Error('failed to read entries')
+  }
+
+  const required_post = posts.find(p => p.slug === event.params.slug)
+
+  if (!required_post) {
+    throw new Error('failed to find post in entries')
+  }
+
+  try {
+    required_post_content = await notion.get(`/blocks/${required_post.id}/children`).json()
+  } catch {
+    throw new Error('failed to fetch post content')
+  }
+
+  try {
+    required_post_info = await notion.get(`/pages/${required_post.id}`).json<type_notion_page>()
+  } catch {
+    throw new Error('failed to fetch post info')
+  }
+
+  const content = await Promise.all(required_post_content.results.map(async c => {
+    if ('code' in c) {
+      return {
+        language : c.code.language,
+        text: c.code.rich_text[0].plain_text,
+        type: 'code'
+      }
+    }
+    if ('heading_1' in c) {
+      return {
+        level: 1,
+        text: c.heading_1.rich_text[0].plain_text,
+        type: 'heading',
+      }
+    }
+    if ('heading_2' in c) {
+      return {
+        level: 2,
+        text: c.heading_2.rich_text[0].plain_text,
+        type: 'heading',
+      }
+    }
+    if ('heading_3' in c) {
+      return {
+        level: 2,
+        text: c.heading_3.rich_text[0].plain_text,
+        type: 'heading',
+      }
+    }
+    if ('image' in c) {
+      const image = await wretch(c.image.file.url).get().blob()
+      await wretch(`https://api.netlify.com/api/v1/blobs/${SITE_ID}/images/${required_post_info.id}/${c.id}`).auth(`Bearer ${NETLIFY_API_KEY}`).headers({
+        'content-type': 'application/octet-stream'
+      }).put(image).res()
+      return {
+        id: c.id,
+        type: 'image'
+      }
+    }
+    if ('paragraph' in c && c.paragraph.rich_text.length) {
+      return {
+        text: c.paragraph.rich_text[0].plain_text,
+        type: 'paragraph'
+      }
+    }
+  })) as Array<{
+    language : 'typescript'
+    text : string
+    type : 'code'
+  } | {
+    level : 1 | 2 | 3
+    text : string
+    type : 'heading'
+  } | {
+    id : string
+    type : 'image'
+  } | {
+    text : string
+    type : 'paragraph'
+  }>
+
+  return {
+    post: {
+      content: content.filter(Boolean),
+      id: required_post_info.id,
+      title: required_post_info.properties.Title.title[0].plain_text
+    }
+  }
+}
+
+const notion = wretch('https://api.notion.com/v1').auth(`Bearer ${NOTION_API_KEY}`).headers({
+  'notion-version': '2022-06-28'
+})

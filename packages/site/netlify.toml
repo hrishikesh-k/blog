@@ -3,5 +3,4 @@
   publish = "packages/site/build"
 
 [dev]
-  command = "npm run dev --workspace=@hrishikeshk/blog"
   targetPort = 5173

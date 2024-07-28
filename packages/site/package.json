@@ -2,8 +2,10 @@
   "dependencies": {
     "@floating-ui/dom": "1.6.8",
     "@hrishikeshk/sveltekit-adapter-netlify": "*",
+    "@netlify/edge-functions": "2.10.0",
     "@sveltejs/vite-plugin-svelte": "3.1.1",
     "class-variance-authority": "0.7.0",
+    "netlify-cli": "17.33.4",
     "postcss": "8.4.40",
     "sass": "1.77.8",
     "svelte": "4.2.18",

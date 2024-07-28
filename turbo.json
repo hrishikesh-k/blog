@@ -1,7 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalPassThroughEnv": [
-    "NOTION_API_KEY"
+    "NETLIFY_API_KEY",
+    "NOTION_API_KEY",
+    "SITE_ID"
   ],
   "tasks": {
     "@hrishikeshk/blog#build": {
