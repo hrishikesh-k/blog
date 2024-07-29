@@ -20,6 +20,6 @@
     "verbatimModuleSyntax": true
   },
   "include": [
-    "index.ts"
+    "./index.ts"
   ]
 }

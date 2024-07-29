@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "packages/site/build"
+  publish = "/packages/site/build"
 
 [dev]
   targetPort = 5173

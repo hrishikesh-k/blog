@@ -6,7 +6,7 @@ const config = {
   kit: {
     adapter: adapterNetlifyStatic({}),
     alias: {
-      '~/*': 'src/*'
+      '~/*': './src/*'
     }
   },
   preprocess: vitePreprocess()
