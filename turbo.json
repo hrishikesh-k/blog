@@ -52,7 +52,8 @@
     "@hrishikeshk/site#dev": {
       "dependsOn": [
         "@hrishikeshk/adapter#build"
-      ]
+      ],
+      "persistent": true
     },
     "@hrishikeshk/site#sync": {
       "dependsOn": [
