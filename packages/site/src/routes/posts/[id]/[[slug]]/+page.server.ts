@@ -250,7 +250,7 @@ async function generate_cached_entry(id : string, file : string) : Promise<TNCac
       try {
         logger.info('fetching image')
         img = await wretch(block.image.file.url).get().blob()
-        logger.success(`fetched image of size ${img.size}`)
+        logger.success(`fetched image of size ${img.size} bytes`)
       } catch (e) {
         logger.error('failed to fetch image')
         throw e

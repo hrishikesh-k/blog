@@ -6,7 +6,7 @@ import {join} from 'node:path'
 
 const action = argv[2].slice(2)
 const logger = new HLogger('@hrishikeshk/cache')
-const svelte_kit_cache_dir = join(cwd(), '../../site/.svelte-kit/cache')
+const svelte_kit_cache_dir = join(cwd(), '../site/.svelte-kit/cache')
 
 if (![
   'restore',
