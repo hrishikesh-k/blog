@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "turbo run save"
   publish = "/packages/site/build"
 
 [dev]
