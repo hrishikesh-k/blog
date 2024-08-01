@@ -1,6 +1,6 @@
 <script lang="ts">
   import {computePosition, offset, shift} from '@floating-ui/dom'
-  import {random_string, rem_to_px} from '~/utils/functions.ts'
+  import {random_string, rem_to_px} from '~/lib/functions.ts'
   import {tick} from 'svelte'
 
   export let text : string

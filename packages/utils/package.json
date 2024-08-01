@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "chalk": "5.3.0"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "name": "@hrishikeshk/utils",
+  "private": true,
+  "scripts": {
+    "build": "tsc"
+  },
+  "type": "module",
+  "version": "0.0.1"
+}

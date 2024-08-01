@@ -1,6 +1,6 @@
 <script lang="ts">
-  import {c_icons} from '~/utils/constants.ts'
-  import type {TCIconName} from '~/utils/types.ts'
+  import {c_icons} from '~/lib/constants.ts'
+  import type {TCIconName} from '~/lib/types.ts'
   export let name : TCIconName
   export let size = 4
   $: d = c_icons[name as Exclude<TCIconName, ''>] || c_icons.notdef

@@ -1,43 +1,74 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalPassThroughEnv": [
-    "NETLIFY_API_KEY",
-    "NOTION_API_KEY",
-    "SITE_ID"
-  ],
   "tasks": {
-    "@hrishikeshk/blog#build": {
+    "@hrishikeshk/cache#build": {
       "cache": false,
       "dependsOn": [
-        "@hrishikeshk/blog#check"
+        "@hrishikeshk/site#check"
+      ]
+    },
+    "@hrishikeshk/cache#restore": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/cache#build"
       ],
-      "outputs": [
-        "build/**"
+      "passThroughEnv": [
+        "NETLIFY",
+        "NETLIFY_CACHE_DIR"
       ]
     },
-    "@hrishikeshk/blog#dev": {
+    "@hrishikeshk/cache#save": {
       "cache": false,
       "dependsOn": [
-        "@hrishikeshk/blog#sync"
+        "@hrishikeshk/site#build"
+      ],
+      "passThroughEnv": [
+        "NETLIFY",
+        "NETLIFY_CACHE_DIR"
       ]
     },
-    "@hrishikeshk/blog#check": {
+    "@hrishikeshk/site#build": {
       "cache": false,
       "dependsOn": [
-        "@hrishikeshk/blog#sync"
+        "@hrishikeshk/cache#restore"
+      ],
+      "passThroughEnv": [
+        "NETLIFY_API_KEY",
+        "NOTION_API_KEY",
+        "SITE_ID"
       ]
     },
-    "@hrishikeshk/sveltekit-adapter-netlify#build": {
-      "cache": false,
-      "outputs": [
-        "dist/**"
-      ]
-    },
-    "@hrishikeshk/blog#sync": {
+    "@hrishikeshk/site#dev": {
       "cache": false,
       "dependsOn": [
-        "@hrishikeshk/sveltekit-adapter-netlify#build"
+        "@hrishikeshk/adapter#build"
       ]
+    },
+    "@hrishikeshk/site#check": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/site#sync"
+      ]
+    },
+    "@hrishikeshk/adapter#build": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/utils#build"
+      ]
+    },
+    "@hrishikeshk/site#sync": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/adapter#build"
+      ],
+      "passThroughEnv": [
+        "NETLIFY_API_KEY",
+        "NOTION_API_KEY",
+        "SITE_ID"
+      ]
+    },
+    "@hrishikeshk/utils#build": {
+      "cache": false
     }
   }
 }

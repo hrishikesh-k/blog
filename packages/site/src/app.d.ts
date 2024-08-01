@@ -7,7 +7,9 @@ declare global {
       width : number
     }
   }
-  namespace App {}
+  namespace App {
+    PageData: {}
+  }
   interface Window {
     ll : ILazyLoadInstance
   }

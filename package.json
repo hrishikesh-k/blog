@@ -1,11 +1,10 @@
 {
   "dependencies": {
-    "@sveltejs/kit": "2.5.18",
-    "@types/node": "22.0.0",
-    "turbo": "2.0.9",
+    "@types/node": "22.0.2",
+    "turbo": "2.0.11",
     "typescript": "5.5.4"
   },
-  "name": "@hrishikeshk/sveltekit-workspace",
+  "name": "@hrishikeshk/workspace",
   "packageManager": "npm@10.8.2",
   "private": true,
   "scripts": {
@@ -14,6 +13,6 @@
   },
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "./packages/*"
   ]
 }

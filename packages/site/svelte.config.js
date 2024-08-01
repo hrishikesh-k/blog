@@ -1,4 +1,4 @@
-import {adapterNetlifyStatic} from '@hrishikeshk/sveltekit-adapter-netlify'
+import {adapterNetlifyStatic} from '@hrishikeshk/adapter'
 import {vitePreprocess} from '@sveltejs/vite-plugin-svelte'
 
 /** @type {import('@sveltejs/kit').Config} */

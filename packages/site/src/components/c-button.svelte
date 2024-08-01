@@ -1,7 +1,7 @@
 <script lang="ts">
   import CIcon from '~/components/c-icon.svelte'
   import {cva} from 'class-variance-authority'
-  import type {TCIconName} from '~/utils/types.ts'
+  import type {TCIconName} from '~/lib/types.ts'
   export let element : 'div' | null = null
   export let icon : TCIconName = ''
   export let label = ''

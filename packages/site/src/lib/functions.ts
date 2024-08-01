@@ -9,3 +9,13 @@ export function random_string() {
 export function rem_to_px(rem : number) {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
+
+export function slugify(text : string) {
+  /*
+    convert to lowercase
+    remove leading and trailing whitespace
+    replace spaces and non-word characters with hyphens
+    remove leading and trailing hyphens
+  */
+  return text.toLowerCase().trim().replace(/[\s\W-]+/g, '-').replace(/^-+|-+$/g, '')
+}

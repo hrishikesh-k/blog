@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@hrishikeshk/utils": "*",
+    "@netlify/cache-utils": "5.1.5"
+  },
+  "name": "@hrishikeshk/cache",
+  "private": true,
+  "scripts":  {
+    "build": "tsc",
+    "restore": "node ./dist/index.js --restore",
+    "save": "node ./dist/index.js --save"
+  },
+  "type": "module",
+  "version": "0.0.1"
+}
