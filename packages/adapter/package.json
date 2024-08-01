@@ -3,7 +3,7 @@
     "@hrishikeshk/utils": "*",
     "@netlify/edge-functions": "2.10.0",
     "@netlify/functions": "2.8.1",
-    "@sveltejs/kit": "2.5.18",
+    "@sveltejs/kit": "2.5.19",
     "esbuild": "0.23.0"
   },
   "engines": {

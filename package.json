@@ -1,15 +1,15 @@
 {
   "dependencies": {
     "@types/node": "22.0.2",
-    "turbo": "2.0.11",
+    "turbo": "2.0.9",
     "typescript": "5.5.4"
   },
   "name": "@hrishikeshk/workspace",
   "packageManager": "npm@10.8.2",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev"
+    "deploy": "turbo run @hrishikeshk/site#deploy --no-cache",
+    "dev": "turbo run @hrishikeshk/site#dev --no-cache"
   },
   "type": "module",
   "workspaces": [

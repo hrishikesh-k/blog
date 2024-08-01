@@ -1,14 +1,17 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "@hrishikeshk/adapter#build": {
+      "dependsOn": [
+        "@hrishikeshk/utils#build"
+      ]
+    },
     "@hrishikeshk/cache#build": {
-      "cache": false,
       "dependsOn": [
         "@hrishikeshk/site#check"
       ]
     },
     "@hrishikeshk/cache#restore": {
-      "cache": false,
       "dependsOn": [
         "@hrishikeshk/cache#build"
       ],
@@ -18,7 +21,6 @@
       ]
     },
     "@hrishikeshk/cache#save": {
-      "cache": false,
       "dependsOn": [
         "@hrishikeshk/site#build"
       ],
@@ -28,7 +30,6 @@
       ]
     },
     "@hrishikeshk/site#build": {
-      "cache": false,
       "dependsOn": [
         "@hrishikeshk/cache#restore"
       ],
@@ -38,26 +39,22 @@
         "SITE_ID"
       ]
     },
-    "@hrishikeshk/site#dev": {
-      "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/adapter#build"
-      ]
-    },
     "@hrishikeshk/site#check": {
-      "cache": false,
       "dependsOn": [
         "@hrishikeshk/site#sync"
       ]
     },
-    "@hrishikeshk/adapter#build": {
-      "cache": false,
+    "@hrishikeshk/site#deploy": {
       "dependsOn": [
-        "@hrishikeshk/utils#build"
+        "@hrishikeshk/cache#save"
+      ]
+    },
+    "@hrishikeshk/site#dev": {
+      "dependsOn": [
+        "@hrishikeshk/adapter#build"
       ]
     },
     "@hrishikeshk/site#sync": {
-      "cache": false,
       "dependsOn": [
         "@hrishikeshk/adapter#build"
       ],
@@ -67,8 +64,6 @@
         "SITE_ID"
       ]
     },
-    "@hrishikeshk/utils#build": {
-      "cache": false
-    }
+    "@hrishikeshk/utils#build": {}
   }
 }
