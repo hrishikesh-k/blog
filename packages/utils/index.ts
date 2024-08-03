@@ -1,4 +1,28 @@
+import {build} from 'esbuild'
+import {builtinModules} from 'node:module'
 import chalk from 'chalk'
+
+export async function bundle_edge_function(input : string, output : string) {
+  await build({
+    alias: Object.fromEntries(builtinModules.map(id => [
+      id,
+      `node:${id}`
+    ])),
+    bundle: true,
+    entryPoints: [
+      input
+    ],
+    external: builtinModules.map(id => `node:${id}`),
+    format: 'esm',
+    mainFields: [
+      'module',
+      'main'
+    ],
+    outfile: output,
+    platform: 'neutral',
+    target: 'esnext'
+  })
+}
 
 export class HLogger {
   #prefix : string

@@ -29,7 +29,7 @@
   "extends": "./.svelte-kit/tsconfig.json",
   "include": [
     "./.svelte-kit/**/*.ts",
-    //"./netlify/**/*.ts",
+    "./netlify/**/*.ts",
     "./src/**/*.svelte",
     "./src/**/*.ts",
     "./tailwind.config.ts",

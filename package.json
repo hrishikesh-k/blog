@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "@types/node": "22.0.2",
+    "@types/node": "22.1.0",
+    "dotenv-cli": "7.4.2",
     "turbo": "2.0.11",
     "typescript": "5.5.4"
   },
@@ -8,8 +9,8 @@
   "packageManager": "npm@10.8.2",
   "private": true,
   "scripts": {
-    "deploy": "turbo run @hrishikeshk/site#deploy --no-cache",
-    "dev": "turbo run @hrishikeshk/site#dev --no-cache"
+    "deploy": "dotenv -- netlify build --filter=@hrishikeshk/site --offline",
+    "dev": "dotenv -- netlify dev --filter=@hrishikeshk/site --offline"
   },
   "type": "module",
   "workspaces": [

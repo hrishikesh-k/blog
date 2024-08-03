@@ -1,10 +1,11 @@
-import type {Config, Context} from '@netlify/edge-functions'
-import wretch from 'https://esm.sh/wretch@2.9.0'
+import type {Config} from '@netlify/edge-functions'
+import {HBlob} from '~/lib/server/constants.ts'
 
-export default async function (req : Request, context : Context) {
+export default async function (req : Request) {
   const url = new URL(req.url)
   const segments = url.pathname.split('/')
-  const image = await wretch(`https://api.netlify.com/api/v1/blobs/${context.site.id}/img/${segments[2]}/${segments[3]}`).auth(`Bearer ${Netlify.env.get('NETLIFY_API_KEY')}`).get().blob()
+  const blobs = new HBlob('img')
+  const image = await blobs.get(`${segments[2]}/${segments[3]}`)
   return new Response(image, {
     headers: {
       'cache-control': 'immutable, public, max-age=31536000',

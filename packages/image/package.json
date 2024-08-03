@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@hrishikeshk/utils": "*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "generate": "node ./dist/index.js"
+  },
+  "name": "@hrishikeshk/image",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1"
+}

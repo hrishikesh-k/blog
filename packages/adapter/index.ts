@@ -1,10 +1,8 @@
 import type {Adapter, Builder} from '@sveltejs/kit'
-import {build} from 'esbuild'
-import {builtinModules} from 'node:module'
+import {bundle_edge_function, HLogger} from '@hrishikeshk/utils'
 import type {Config as EdgeFunctionsConfig} from '@netlify/edge-functions'
 import type {Config as FunctionsConfig} from '@netlify/functions'
 import {cwd} from 'node:process'
-import {HLogger} from '@hrishikeshk/utils'
 import {join, relative} from 'node:path'
 import {writeFileSync} from 'node:fs'
 
@@ -168,25 +166,7 @@ export const config = {
 
       try {
         logger.info('Bundling Edge Function using esbuild')
-        await build({
-          alias: Object.fromEntries(builtinModules.map(id => [
-            id,
-            `node:${id}`
-          ])),
-          bundle: true,
-          entryPoints: [
-            ntl_ef_path
-          ],
-          external: builtinModules.map(id => `node:${id}`),
-          format: 'esm',
-          mainFields: [
-            'module',
-            'main'
-          ],
-          outfile: sk_edge_function_path,
-          platform: 'neutral',
-          target: 'esnext'
-        })
+        await bundle_edge_function(ntl_ef_path, sk_edge_function_path)
         logger.success('successfully bundled Edge Function')
       } catch (e) {
         logger.error('failed to bundle Edge Function')

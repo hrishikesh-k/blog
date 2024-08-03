@@ -2,16 +2,19 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "@hrishikeshk/adapter#build": {
+      "cache": false,
       "dependsOn": [
         "@hrishikeshk/utils#build"
       ]
     },
     "@hrishikeshk/cache#build": {
+      "cache": false,
       "dependsOn": [
         "@hrishikeshk/site#check"
       ]
     },
     "@hrishikeshk/cache#restore": {
+      "cache": false,
       "dependsOn": [
         "@hrishikeshk/cache#build"
       ],
@@ -21,6 +24,7 @@
       ]
     },
     "@hrishikeshk/cache#save": {
+      "cache": false,
       "dependsOn": [
         "@hrishikeshk/site#build"
       ],
@@ -29,42 +33,61 @@
         "NETLIFY_CACHE_DIR"
       ]
     },
+    "@hrishikeshk/image#build": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/site#sync"
+      ]
+    },
+    "@hrishikeshk/image#generate": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/image#build"
+      ]
+    },
     "@hrishikeshk/site#build": {
+      "cache": false,
       "dependsOn": [
         "@hrishikeshk/cache#restore"
       ],
       "passThroughEnv": [
         "NETLIFY_API_KEY",
-        "NOTION_API_KEY",
-        "SITE_ID"
+        "NETLIFY_SITE_ID",
+        "NOTION_API_KEY"
       ]
     },
     "@hrishikeshk/site#check": {
+      "cache": false,
       "dependsOn": [
-        "@hrishikeshk/site#sync"
+        "@hrishikeshk/image#generate"
       ]
     },
     "@hrishikeshk/site#deploy": {
+      "cache": false,
       "dependsOn": [
         "@hrishikeshk/cache#save"
       ]
     },
     "@hrishikeshk/site#dev": {
+      "cache": false,
       "dependsOn": [
-        "@hrishikeshk/adapter#build"
+        "@hrishikeshk/image#generate"
       ],
       "persistent": true
     },
     "@hrishikeshk/site#sync": {
+      "cache": false,
       "dependsOn": [
         "@hrishikeshk/adapter#build"
       ],
       "passThroughEnv": [
         "NETLIFY_API_KEY",
-        "NOTION_API_KEY",
-        "SITE_ID"
+        "NETLIFY_SITE_ID",
+        "NOTION_API_KEY"
       ]
     },
-    "@hrishikeshk/utils#build": {}
+    "@hrishikeshk/utils#build": {
+      "cache": false
+    }
   }
 }
