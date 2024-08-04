@@ -1,8 +1,10 @@
 <script lang="ts">
   import {onMount} from 'svelte'
-  import {page} from '$app/stores'
+  export let alt : string
   export let max_width : number = 1200
-  export let name : keyof typeof $page.data.resources
+  export let height : number
+  export let src : string
+  export let width : number
   const preset_widths = [
     360,
     640,
@@ -11,12 +13,11 @@
     1200
   ]
   function generate_image_cdn_url(w : number) {
-    return `/.netlify/images?url=${image.src}&w=${w}`
+    return `/.netlify/images?url=${src}&w=${w}`
   }
   function lt_max_width(num : number) {
     return num < max_width
   }
-  $: image = $page.data.resources[name]
   $: widths = preset_widths.filter(lt_max_width).concat([
     max_width
   ])
@@ -50,5 +51,5 @@
       <source data-srcset="{generate_image_cdn_url(width)}" media="(max-width: {width}px)"/>
     {/if}
   {/each}
-  <img alt="{image.alt}" class="block blur duration-300 h-full object-contain w-full" height="{image.height}" src="{generate_image_cdn_url(64)}" width="{image.width}"/>
+  <img {alt} class="block blur duration-300 h-full object-contain w-full" {height} src="{generate_image_cdn_url(64)}" {width}/>
 </picture>

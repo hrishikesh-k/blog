@@ -15,7 +15,7 @@ export type TNBHeading<T extends 1 | 2 | 3> = TNBText<`heading_${T}`> & {
 
 export type TNBImage = {
   image : {
-    caption: []
+    caption: Array<TNText>
     file : {
       expiry_time : string
       url : string
@@ -44,8 +44,11 @@ export type TNBlock = {
   text : string
   type : 'heading'
 } | {
+  alt : string
+  height : number
   id : string
   type : 'image'
+  width : number
 } | {
   text : string
   type : 'paragraph'

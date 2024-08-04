@@ -7,6 +7,9 @@ const config = {
     adapter: adapterNetlifyStatic({}),
     alias: {
       '~/*': './src/*'
+    },
+    prerender: {
+      handleHttpError: 'warn'
     }
   },
   preprocess: vitePreprocess()

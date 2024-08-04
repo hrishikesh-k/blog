@@ -73,6 +73,11 @@
       "dependsOn": [
         "@hrishikeshk/image#generate"
       ],
+      "passThroughEnv": [
+        "NETLIFY_API_KEY",
+        "NETLIFY_SITE_ID",
+        "NOTION_API_KEY"
+      ],
       "persistent": true
     },
     "@hrishikeshk/site#sync": {

@@ -45,6 +45,6 @@ export class HLogger {
     console.log(chalk.green(`${this.prefix}: ${msg}`))
   }
   warn(msg : string) {
-    console.warn(`${this.prefix}: ${msg}`)
+    console.warn(chalk.yellow(`${this.prefix}: ${msg}`))
   }
 }

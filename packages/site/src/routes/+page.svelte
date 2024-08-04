@@ -10,7 +10,7 @@
     <h1 class="m-0 text-center">Hi,<br/>I'm Hrishikesh Kokate</h1>
     <div class="flex gap-x-1 items-center">
       <CButton icon="circle-info" intent="filled" label="About" link="/about/"/>
-      <CButton icon="newspaper" intent="filled" label="Blog" link="/about/"/>
+      <CButton icon="newspaper" intent="filled" label="Blog" link="/posts/"/>
     </div>
   </div>
   <PAnimation/>

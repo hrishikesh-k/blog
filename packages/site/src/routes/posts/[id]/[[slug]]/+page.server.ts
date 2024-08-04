@@ -1,63 +1,27 @@
+import {all_posts_cache_file, cache_dir, HBlob, notion} from '~/lib/server/constants.ts'
 import {compareAsc, formatISO, parseISO} from 'date-fns'
-import {cwd} from 'node:process'
 import type {EntryGenerator, PageServerLoad} from './$types'
-import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs'
-import {HBlob, notion} from '~/lib/server/constants.ts'
+import {existsSync, readFileSync, writeFileSync} from 'node:fs'
 import {HLogger} from '@hrishikeshk/utils'
+import imageSize from 'image-size'
+import type {ISizeCalculationResult} from 'image-size/dist/types/interface.d.ts'
+import {load_all_posts} from '~/lib/server/functions.ts'
 import {join} from 'node:path'
 import {slugify} from '~/lib/functions.ts'
 import type {TNBCode, TNBHeading, TNBImage, TNBlobList, TNBlock, TNBParagraph, TNCache, TNPage, TNRes} from '~/lib/types.ts'
 import wretch from 'wretch'
 
-const cache_dir = join(cwd(), '.svelte-kit/cache')
-const all_posts_cache_file = join(cache_dir, 'all_posts.json')
 const logger = new HLogger('/posts/[id]/[[slug]]/+page.server.ts')
-
-if (!existsSync(cache_dir)) {
-  try {
-    logger.info(`${cache_dir} missing, creating`)
-    mkdirSync(cache_dir)
-    logger.success(`${cache_dir} created`)
-  } catch {
-    logger.warn(`failed to create ${cache_dir}, build will proceed without cache`)
-  }
-}
 
 export const entries : EntryGenerator = async () => {
 
-  let all_posts : TNRes<'page_or_database', Pick<TNPage, 'cover' | 'icon' | 'object' | 'parent' | 'properties' | 'public_url' | 'url'>>
+  const all_posts = await load_all_posts(logger)
 
-  try {
-    logger.info('fetching entries to prerender')
-    all_posts = await notion.post(null, '/databases/ee93ad0cead84102868aae5665d8d2d1/query').json()
-    logger.success(`fetched ${all_posts.results.length} total entries`)
-  } catch (e) {
-    logger.error('failed to fetch entries')
-    throw e
-  }
-
-  const all_posts_filtered = all_posts.results.filter(p => !p.archived && !p.in_trash && p.properties.Status.status.name === 'Published')
-
-  try {
-    logger.info(`writing ${all_posts_filtered.length} filtered entries to ${all_posts_cache_file}`)
-    writeFileSync(all_posts_cache_file, JSON.stringify(all_posts_filtered.map(p => ({
-      id: p.id,
-      slug: slugify(p.properties.Title.title[0].plain_text),
-      updated_at: p.last_edited_time
-    }))), {
-      encoding: 'utf-8'
-    })
-    logger.success(`${all_posts_cache_file} wrote successfully`)
-  } catch (e) {
-    logger.error(`failed to write ${all_posts_cache_file} or encode data as JSON`)
-    throw e
-  }
-
-  return all_posts_filtered.map(p => ({
+  return all_posts.map(p => ({
     id: p.id
-  })).concat(all_posts_filtered.map(p => ({
+  })).concat(all_posts.map(p => ({
     id: p.id,
-    slug: slugify(p.properties.Title.title[0].plain_text)
+    slug: p.slug
   })))
 
 }
@@ -68,32 +32,12 @@ export const load : PageServerLoad = async event => {
 
   const post_cache_file = join(cache_dir, `${event.params.id}.json`)
 
-  let all_post_cache : Array<{
-    id : string
-    slug : string
-    updated_at: string
-  }>
-
   let post_cache : TNCache
 
-  if (!existsSync(all_posts_cache_file)) {
-    logger.error(`${all_posts_cache_file} missing, this is unexpected`)
-    throw new Error(`${all_posts_cache_file} missing`)
-  }
-
-  try {
-    logger.info(`reading ${all_posts_cache_file}`)
-    all_post_cache  = JSON.parse(readFileSync(all_posts_cache_file, {
-      encoding: 'utf-8'
-    }))
-    logger.success(`read ${all_post_cache.length} posts from cache`)
-  } catch (e) {
-    logger.error(`failed to read ${all_posts_cache_file} or parse it as JSON`)
-    throw e
-  }
+  const all_posts = await load_all_posts(logger)
 
   logger.info(`looking up ${event.params.id} in ${all_posts_cache_file}`)
-  const post_from_all_post_cache = all_post_cache.find(p => p.id === event.params.id)
+  const post_from_all_post_cache = all_posts.find(p => p.id === event.params.id)
 
   if (!post_from_all_post_cache) {
     logger.error(`${event.params.id} missing in ${all_posts_cache_file}, this is unexpected`)
@@ -246,6 +190,7 @@ async function generate_cached_entry(id : string, file : string) : Promise<TNCac
     if ('image' in block) {
 
       let img : Blob
+      let size : ISizeCalculationResult
 
       try {
         logger.info('fetching image')
@@ -265,9 +210,25 @@ async function generate_cached_entry(id : string, file : string) : Promise<TNCac
         throw e
       }
 
+      try {
+        logger.info('calculating image size')
+        const buffer = await img.arrayBuffer()
+        size = imageSize(new Uint8Array(buffer))
+        if (!size.height || !size.width) {
+          logger.error('height or width is invalid')
+          throw new Error('height or width is invalid')
+        }
+      } catch (e) {
+        logger.error('failed to calculate image size')
+        throw e
+      }
+
       return {
+        alt: block.image.caption[0].plain_text,
+        height: size.height,
         id: block.id,
-        type: 'image'
+        type: 'image',
+        width: size.width
       }
 
     }

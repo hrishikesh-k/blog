@@ -1,7 +1,11 @@
-import {env} from 'node:process'
+import {cwd, env} from 'node:process'
+import {join} from 'node:path'
 import type {TNBlobList} from '~/lib/types.ts'
 import wretch from 'wretch'
 import wretchQueryStringAddon from 'wretch/addons/queryString'
+
+export const cache_dir = join(cwd(), '.svelte-kit/cache')
+export const all_posts_cache_file = join(cache_dir, 'all_posts.json')
 
 export class HBlob {
   #api
