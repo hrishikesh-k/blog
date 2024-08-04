@@ -13,7 +13,7 @@
     1200
   ]
   function generate_image_cdn_url(w : number) {
-    return `/.netlify/images?url=${src}&w=${w}`
+    return `/.netlify/images?url=/images/${src}&w=${w}`
   }
   function lt_max_width(num : number) {
     return num < max_width

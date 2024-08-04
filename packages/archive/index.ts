@@ -9,7 +9,6 @@ const working_dir = cwd()
 const adapter_dist_dir = join(working_dir, '../adapter/dist')
 const archive_dist_dir = join(working_dir, 'dist')
 const cache_dist_dir = join(working_dir, '../cache/dist')
-const idea_cache_dir = join(working_dir, '../../.idea')
 const image_dist_dir = join(working_dir, '../image/dist')
 const site_build_dir = join(working_dir, '../site/build')
 const site_netlify_cache_dir = join(working_dir, '../site/.netlify')
@@ -23,7 +22,6 @@ const dirs_to_delete = [
   adapter_dist_dir,
   archive_dist_dir,
   cache_dist_dir,
-  idea_cache_dir,
   image_dist_dir,
   site_build_dir,
   site_netlify_cache_dir,
