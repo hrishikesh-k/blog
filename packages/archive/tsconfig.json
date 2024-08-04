@@ -5,9 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "declaration": true,
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noUnusedParameters": true,
@@ -19,7 +17,5 @@
     "target": "ESNext",
     "verbatimModuleSyntax": true
   },
-  "include": [
-    "./index.ts"
-  ]
+  "include": ["./index.ts"]
 }

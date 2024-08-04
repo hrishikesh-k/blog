@@ -2,9 +2,7 @@ import type {Config} from 'tailwindcss'
 import plugin from 'tailwindcss/plugin'
 import type {PluginAPI} from 'tailwindcss/types/config'
 export default {
-  content: [
-    './src/**/*.{html,svelte}'
-  ],
+  content: ['./src/**/*.{html,svelte}'],
   corePlugins: {
     accentColor: false,
     accessibility: false,
@@ -188,86 +186,107 @@ export default {
   },
   plugins: [
     /* animate-delay */
-    plugin((p : PluginAPI) => {
-      p.matchUtilities({
-        'animate-delay': v => {
-          return {
-            'animation-delay': v
+    plugin((p: PluginAPI) => {
+      p.matchUtilities(
+        {
+          'animate-delay': (v) => {
+            return {
+              'animation-delay': v
+            }
           }
         },
-      }, {
-        modifiers: 'any',
-        values: p.theme('transitionDelay')
-      })
+        {
+          modifiers: 'any',
+          values: p.theme('transitionDelay')
+        }
+      )
     }),
     /* animate-duration */
-    plugin((p : PluginAPI) => {
-      p.matchUtilities({
-        'animate-duration': v => {
-          return {
-            'animation-duration': v
+    plugin((p: PluginAPI) => {
+      p.matchUtilities(
+        {
+          'animate-duration': (v) => {
+            return {
+              'animation-duration': v
+            }
           }
+        },
+        {
+          values: p.theme('transitionDuration')
         }
-      }, {
-        values: p.theme('transitionDuration')
-      })
+      )
     }),
     /* animate-fil-mode */
-    plugin((p : PluginAPI) => {
-      p.matchUtilities({
-        'animate-fill': v => {
-          return {
-            'animation-fill-mode': v
+    plugin((p: PluginAPI) => {
+      p.matchUtilities(
+        {
+          'animate-fill': (v) => {
+            return {
+              'animation-fill-mode': v
+            }
+          }
+        },
+        {
+          values: {
+            forwards: 'forwards'
           }
         }
-      }, {
-        values: {
-          forwards: 'forwards'
-        }
-      })
+      )
     }),
     /* animate-name */
-    plugin((p : PluginAPI) => {
-      p.matchUtilities({
-        'animate-name': v => {
-          return {
-            'animation-name': v
+    plugin((p: PluginAPI) => {
+      p.matchUtilities(
+        {
+          'animate-name': (v) => {
+            return {
+              'animation-name': v
+            }
           }
+        },
+        {
+          values: Object.keys(p.theme('keyframes')).reduce(
+            (o, k) => {
+              const cloned_obj = o
+              cloned_obj[k] = k
+              return cloned_obj
+            },
+            {} as Record<string, string>
+          )
         }
-      }, {
-        values: Object.keys(p.theme('keyframes')).reduce((o, k) => {
-          const cloned_obj = o
-          cloned_obj[k] = k
-          return cloned_obj
-        }, {} as Record<string, string>)
-      })
+      )
     }),
     /* animate-timing-function */
-    plugin((p : PluginAPI) => {
-      p.matchUtilities({
-        'animate-ease': v => {
-          return {
-            'animation-timing-function': v
+    plugin((p: PluginAPI) => {
+      p.matchUtilities(
+        {
+          'animate-ease': (v) => {
+            return {
+              'animation-timing-function': v
+            }
           }
+        },
+        {
+          values: p.theme('transitionTimingFunction')
         }
-      }, {
-        values: p.theme('transitionTimingFunction')
-      })
+      )
     }),
     /* pointer-events */
-    plugin((p : PluginAPI) => {
-      p.matchUtilities({
-        'pointer-events': v => {
-          return {
-            'pointer-events': v
+    plugin((p: PluginAPI) => {
+      p.matchUtilities(
+        {
+          'pointer-events': (v) => {
+            return {
+              'pointer-events': v
+            }
           }
+        },
+        {
+          values: p.theme('pointerEvents')
         }
-      }, {
-        values: p.theme('pointerEvents')
-      })
+      )
     }),
     /* transform-box */
-    plugin((p : PluginAPI) => {
+    plugin((p: PluginAPI) => {
       p.addUtilities({
         '.transform-box-border': {
           'transform-box': 'border-box'
@@ -279,10 +298,7 @@ export default {
     extend: {
       fontFamily: {
         inherit: 'inherit',
-        sans: [
-          '\'Inter\'',
-          'sans-serif'
-        ]
+        sans: ["'Inter'", 'sans-serif']
       },
       fontSize: {
         inherit: 'inherit'

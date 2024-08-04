@@ -7,19 +7,17 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "plugins": [{
-      "name": "typescript-svelte-plugin"
-    }],
+    "plugins": [
+      {
+        "name": "typescript-svelte-plugin"
+      }
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,

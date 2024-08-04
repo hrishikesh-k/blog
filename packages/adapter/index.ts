@@ -17,8 +17,7 @@ const sk_server_dir = join(working_dir, '.svelte-kit/netlify')
 const sk_edge_function_path = join(ntl_edge_functions_dir, 'sk-server.js')
 const sk_function_path = join(ntl_functions_dir, 'sk-server.js')
 
-async function init(builder : Builder) {
-
+async function init(builder: Builder) {
   const publish_dir = join(working_dir, 'build')
   logger.info(`publish dir is ${publish_dir}`)
   const sk_publish_dir = join(publish_dir, builder.config.kit.paths.base)
@@ -38,8 +37,8 @@ async function init(builder : Builder) {
   ]
 
   try {
-    logger.warn(`deleting: ${delete_dirs.map(d => `\n  - ${d}`).join()}`)
-    delete_dirs.forEach(d => builder.rimraf(d))
+    logger.warn(`deleting: ${delete_dirs.map((d) => `\n  - ${d}`).join()}`)
+    delete_dirs.forEach((d) => builder.rimraf(d))
     logger.success('successfully deleted')
   } catch (e) {
     logger.error('failed to delete')
@@ -65,47 +64,57 @@ async function init(builder : Builder) {
     builder.writeClient(sk_publish_dir)
     builder.writePrerendered(sk_publish_dir)
     builder.writeServer(sk_server_dir)
-    writeFileSync(join(ntl_frameworks_api_dir, 'config.json'), JSON.stringify({
-      headers: [{
-        for: `/${builder.getAppPath()}/immutable/*`,
-        values: {
-          'cache-control': 'immutable, public, max-age=31536000'
-        }
-      }]
-    }))
+    writeFileSync(
+      join(ntl_frameworks_api_dir, 'config.json'),
+      JSON.stringify({
+        headers: [
+          {
+            for: `/${builder.getAppPath()}/immutable/*`,
+            values: {
+              'cache-control': 'immutable, public, max-age=31536000'
+            }
+          }
+        ]
+      })
+    )
     logger.success('successfully wrote static and config files')
   } catch (e) {
     logger.error('failed to write files')
     throw e
   }
-
 }
 
-export function adapterNetlifyEdgeFunctions(options : Partial<Pick<EdgeFunctionsConfig, 'excludedPath' | 'onError' | 'rateLimit'>> = {}) {
+export function adapterNetlifyEdgeFunctions(
+  options: Partial<
+    Pick<EdgeFunctionsConfig, 'excludedPath' | 'onError' | 'rateLimit'>
+  > = {}
+) {
   return {
     async adapt(builder) {
-
       logger.info('adapter is using Netlify Edge Functions')
       await init(builder)
 
-      function path_to_regex(path : string, suffix? : string) {
+      function path_to_regex(path: string, suffix?: string) {
         return [
           '^',
-          path.split('').map(s => {
-            if (/[A-Za-z]/.test(s)) {
-              return `[${s.toUpperCase()}${s.toLowerCase()}]`
-            }
-            switch (s) {
-              case '/':
-                return '\\/'
-              case '.':
-                return '\\.'
-              case '*':
-                return '.*'
-              default:
-                return s
-            }
-          }).join(''),
+          path
+            .split('')
+            .map((s) => {
+              if (/[A-Za-z]/.test(s)) {
+                return `[${s.toUpperCase()}${s.toLowerCase()}]`
+              }
+              switch (s) {
+                case '/':
+                  return '\\/'
+                case '.':
+                  return '\\.'
+                case '*':
+                  return '.*'
+                default:
+                  return s
+              }
+            })
+            .join(''),
           suffix,
           '$'
         ].join('')
@@ -113,8 +122,8 @@ export function adapterNetlifyEdgeFunctions(options : Partial<Pick<EdgeFunctions
 
       const efn = `import {Server} from '${join(builder.getServerDirectory(), 'index.js')}'
 const server = new Server(${builder.generateManifest({
-  relativePath: './'
-})})
+        relativePath: './'
+      })})
 await server.init({
   env: Deno.env.toObject()
 })
@@ -129,18 +138,33 @@ export default async function(req, context) {
   })
 }
 export const config = {
-  excludedPattern: ${JSON.stringify([
-    `${path_to_regex('/.netlify/*')}`,
-    `${path_to_regex('/favicon.ico')}`,
-    `${path_to_regex(`/${builder.getAppPath()}/immutable/*`)}`
-  ].concat(builder.routes.filter(r => r.prerender).map(r => {
-    if (r.id === '/') {
-      /* https://regex101.com/r/5Pk7mO/1 */
-      return path_to_regex('/', '(([Hh][Oo][Mm][Ee]|[Ii][Nn][Dd][Ee][Xx])\\.[Hh][Tt][Mm][Ll]?)?')
-    }
-    /* https://regex101.com/r/eE3kiI/1 */
-    return path_to_regex(r.id, '(\\.[Hh][Tt][Mm][Ll]?|\\/|(\\/([Ii][Nn][Dd][Ee][Xx]|[Hh][Oo][Mm][Ee]))\\.[Hh][Tt][Mm][Ll]?)?')
-  }).flat()).concat(options.excludedPath || []))},
+  excludedPattern: ${JSON.stringify(
+    [
+      `${path_to_regex('/.netlify/*')}`,
+      `${path_to_regex('/favicon.ico')}`,
+      `${path_to_regex(`/${builder.getAppPath()}/immutable/*`)}`
+    ]
+      .concat(
+        builder.routes
+          .filter((r) => r.prerender)
+          .map((r) => {
+            if (r.id === '/') {
+              /* https://regex101.com/r/5Pk7mO/1 */
+              return path_to_regex(
+                '/',
+                '(([Hh][Oo][Mm][Ee]|[Ii][Nn][Dd][Ee][Xx])\\.[Hh][Tt][Mm][Ll]?)?'
+              )
+            }
+            /* https://regex101.com/r/eE3kiI/1 */
+            return path_to_regex(
+              r.id,
+              '(\\.[Hh][Tt][Mm][Ll]?|\\/|(\\/([Ii][Nn][Dd][Ee][Xx]|[Hh][Oo][Mm][Ee]))\\.[Hh][Tt][Mm][Ll]?)?'
+            )
+          })
+          .flat()
+      )
+      .concat(options.excludedPath || [])
+  )},
   generator: '${generator}',
   name: '${fn_name}',
   onError: ${JSON.stringify(options.onError || undefined)},
@@ -172,21 +196,23 @@ export const config = {
         logger.error('failed to bundle Edge Function')
         throw e
       }
-
     },
     name: generator,
     supports: {
       read(config) {
-        throw new Error(`${generator} cannot use \`read\` from \`$apps/server\' in route \`${config.route.id}\`, switch to \`adapterNetlifyFunctions\``)
+        throw new Error(
+          `${generator} cannot use \`read\` from \`$apps/server\' in route \`${config.route.id}\`, switch to \`adapterNetlifyFunctions\``
+        )
       }
     }
   } satisfies Adapter
 }
 
-export function adapterNetlifyFunctions(options : Partial<Pick<FunctionsConfig, 'excludedPath' | 'rateLimit'>> = {}) {
+export function adapterNetlifyFunctions(
+  options: Partial<Pick<FunctionsConfig, 'excludedPath' | 'rateLimit'>> = {}
+) {
   return {
     async adapt(builder) {
-
       logger.info('adapter is using Netlify Functions')
       await init(builder)
 
@@ -202,8 +228,8 @@ if (!globalThis.crypto) {
   })
 }
 const server = new Server(${builder.generateManifest({
-  relativePath: relative(ntl_functions_dir, sk_server_dir)
-})})
+        relativePath: relative(ntl_functions_dir, sk_server_dir)
+      })})
 await server.init({
   env
 })
@@ -219,9 +245,9 @@ export default async function(req, context) {
 }
 export const config = {
   displayName: '${fn_name}',
-  excludedPath: ${JSON.stringify([
-    '/.netlify/*'
-  ].concat(options.excludedPath || []))},
+  excludedPath: ${JSON.stringify(
+    ['/.netlify/*'].concat(options.excludedPath || [])
+  )},
   generator: '${generator}',
   path: '/*',
   preferStatic: true,
@@ -245,9 +271,11 @@ export const config = {
 export function adapterNetlifyStatic() {
   return {
     async adapt(builder) {
-      const dynamic_routes = builder.routes.filter(r => !r.prerender)
+      const dynamic_routes = builder.routes.filter((r) => !r.prerender)
       if (dynamic_routes.length) {
-        logger.error(`${generator} found the following dynamic routes:${dynamic_routes.map(r => '\n  - ' + join(relative(working_dir, builder.config.kit.files.routes), r.id))}`)
+        logger.error(
+          `${generator} found the following dynamic routes:${dynamic_routes.map((r) => '\n  - ' + join(relative(working_dir, builder.config.kit.files.routes), r.id))}`
+        )
         throw new Error('')
       }
       builder.generateEnvModule()

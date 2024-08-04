@@ -1,4 +1,9 @@
-import {all_posts_cache_file, cache_dir, HBlob, notion} from '~/lib/server/constants.ts'
+import {
+  all_posts_cache_file,
+  cache_dir,
+  HBlob,
+  notion
+} from '~/lib/server/constants.ts'
 import {compareAsc, formatISO, parseISO} from 'date-fns'
 import type {EntryGenerator, PageServerLoad} from './$types'
 import {existsSync, readFileSync, writeFileSync} from 'node:fs'
@@ -8,39 +13,54 @@ import type {ISizeCalculationResult} from 'image-size/dist/types/interface.d.ts'
 import {load_all_posts} from '~/lib/server/functions.ts'
 import {join} from 'node:path'
 import {slugify} from '~/lib/functions.ts'
-import type {TNBCode, TNBHeading, TNBImage, TNBlobList, TNBlock, TNBParagraph, TNCache, TNPage, TNRes} from '~/lib/types.ts'
+import type {
+  TNBCode,
+  TNBHeading,
+  TNBImage,
+  TNBlobList,
+  TNBlock,
+  TNBParagraph,
+  TNCache,
+  TNPage,
+  TNRes
+} from '~/lib/types.ts'
 import wretch from 'wretch'
 
 const logger = new HLogger('/posts/[id]/[[slug]]/+page.server.ts')
 
-export const entries : EntryGenerator = async () => {
-
+export const entries: EntryGenerator = async () => {
   const all_posts = await load_all_posts(logger)
 
-  return all_posts.map(p => ({
-    id: p.id
-  })).concat(all_posts.map(p => ({
-    id: p.id,
-    slug: p.slug
-  })))
-
+  return all_posts
+    .map((p) => ({
+      id: p.id
+    }))
+    .concat(
+      all_posts.map((p) => ({
+        id: p.id,
+        slug: p.slug
+      }))
+    )
 }
 
-export const load : PageServerLoad = async event => {
-
+export const load: PageServerLoad = async (event) => {
   logger.prefix = `/${Object.values(event.params).join('/')}/`
 
   const post_cache_file = join(cache_dir, `${event.params.id}.json`)
 
-  let post_cache : TNCache
+  let post_cache: TNCache
 
   const all_posts = await load_all_posts(logger)
 
   logger.info(`looking up ${event.params.id} in ${all_posts_cache_file}`)
-  const post_from_all_post_cache = all_posts.find(p => p.id === event.params.id)
+  const post_from_all_post_cache = all_posts.find(
+    (p) => p.id === event.params.id
+  )
 
   if (!post_from_all_post_cache) {
-    logger.error(`${event.params.id} missing in ${all_posts_cache_file}, this is unexpected`)
+    logger.error(
+      `${event.params.id} missing in ${all_posts_cache_file}, this is unexpected`
+    )
     throw new Error(`${event.params.id} missing`)
   }
 
@@ -49,9 +69,11 @@ export const load : PageServerLoad = async event => {
   if (existsSync(post_cache_file)) {
     try {
       logger.info(`cache found at ${post_cache_file}, reading it`)
-      post_cache = JSON.parse(readFileSync(post_cache_file, {
-        encoding: 'utf-8'
-      }))
+      post_cache = JSON.parse(
+        readFileSync(post_cache_file, {
+          encoding: 'utf-8'
+        })
+      )
       logger.success(`cache read, cached at ${post_cache.cached_at}`)
     } catch (e) {
       logger.error(`failed to read ${post_cache_file} or parse it as JSON`)
@@ -73,7 +95,12 @@ export const load : PageServerLoad = async event => {
   logger.info(`checking freshness of ${post_cache_file}`)
 
   /* 1 means first date is after second date: https://date-fns.org/docs/compareAsc */
-  if (compareAsc(parseISO(post_cache.cached_at), parseISO(post_from_all_post_cache.updated_at)) !== 1) {
+  if (
+    compareAsc(
+      parseISO(post_cache.cached_at),
+      parseISO(post_from_all_post_cache.updated_at)
+    ) !== 1
+  ) {
     logger.warn(`${post_cache_file} is stale, generating fresh cache`)
     post_cache = await generate_cached_entry(event.params.id, post_cache_file)
   } else {
@@ -90,21 +117,31 @@ export const load : PageServerLoad = async event => {
   }
 }
 
-async function generate_cached_entry(id : string, file : string) : Promise<TNCache> {
-
+async function generate_cached_entry(
+  id: string,
+  file: string
+): Promise<TNCache> {
   const blob_store = new HBlob('img')
-  let blob_list : TNBlobList
+  let blob_list: TNBlobList
 
-  let post_blocks : TNRes<'block', {
-    has_children : boolean
-    object : 'block'
-    parent : {
-      page_id : string
-      type : 'page_id'
-    }
-  } & TNBCode<'typescript'> | TNBHeading<1> | TNBHeading<2> | TNBHeading<3> | TNBImage | TNBParagraph>
+  let post_blocks: TNRes<
+    'block',
+    | ({
+        has_children: boolean
+        object: 'block'
+        parent: {
+          page_id: string
+          type: 'page_id'
+        }
+      } & TNBCode<'typescript'>)
+    | TNBHeading<1>
+    | TNBHeading<2>
+    | TNBHeading<3>
+    | TNBImage
+    | TNBParagraph
+  >
 
-  let post_info : TNPage
+  let post_info: TNPage
 
   try {
     logger.info('checking existing blobs for current page')
@@ -122,7 +159,7 @@ async function generate_cached_entry(id : string, file : string) : Promise<TNCac
         await blob_store.delete(blob.key)
         logger.success(`deleted ${blob.key}`)
       } catch (e) {
-        throw  e
+        throw e
       }
     }
   } else {
@@ -147,109 +184,107 @@ async function generate_cached_entry(id : string, file : string) : Promise<TNCac
     throw e
   }
 
-  const blocks = await Promise.all(post_blocks.results.map(async block => {
+  const blocks = (await Promise.all(
+    post_blocks.results.map(async (block) => {
+      logger.info(`processing block ${block.id} of type ${block.type}`)
 
-    logger.info(`processing block ${block.id} of type ${block.type}`)
-
-    if ('code' in block) {
-      return {
-        id: block.id,
-        language : block.code.language,
-        text: block.code.rich_text[0].plain_text,
-        type: 'code'
-      }
-    }
-
-    if ('heading_1' in block) {
-      return {
-        id: block.id,
-        level: 1,
-        text: block.heading_1.rich_text[0].plain_text,
-        type: 'heading',
-      }
-    }
-
-    if ('heading_2' in block) {
-      return {
-        id: block.id,
-        level: 2,
-        text: block.heading_2.rich_text[0].plain_text,
-        type: 'heading',
-      }
-    }
-
-    if ('heading_3' in block) {
-      return {
-        id: block.id,
-        level: 2,
-        text: block.heading_3.rich_text[0].plain_text,
-        type: 'heading',
-      }
-    }
-
-    if ('image' in block) {
-
-      let img : Blob
-      let size : ISizeCalculationResult
-
-      try {
-        logger.info('fetching image')
-        img = await wretch(block.image.file.url).get().blob()
-        logger.success(`fetched image of size ${img.size} bytes`)
-      } catch (e) {
-        logger.error('failed to fetch image')
-        throw e
-      }
-
-      try {
-        logger.info(`uploading ${block.id} to blobs`)
-        await blob_store.set(`${post_info.id}/${block.id}`, img)
-        logger.success('image uploaded')
-      } catch (e) {
-        logger.error(`failed to upload ${block.id}`)
-        throw e
-      }
-
-      try {
-        logger.info('calculating image size')
-        const buffer = await img.arrayBuffer()
-        size = imageSize(new Uint8Array(buffer))
-        if (!size.height || !size.width) {
-          logger.error('height or width is invalid')
-          throw new Error('height or width is invalid')
-        }
-      } catch (e) {
-        logger.error('failed to calculate image size')
-        throw e
-      }
-
-      return {
-        alt: block.image.caption[0].plain_text,
-        height: size.height,
-        id: block.id,
-        type: 'image',
-        width: size.width
-      }
-
-    }
-
-    if ('paragraph' in block) {
-      if (block.paragraph.rich_text.length) {
+      if ('code' in block) {
         return {
           id: block.id,
-          text: block.paragraph.rich_text[0].plain_text,
-          type: 'paragraph'
+          language: block.code.language,
+          text: block.code.rich_text[0].plain_text,
+          type: 'code'
         }
-      } else {
-        logger.warn(`skipping paragraph ${block.id} as it's empty`)
       }
-    }
 
-  })) as Array<TNBlock>
+      if ('heading_1' in block) {
+        return {
+          id: block.id,
+          level: 1,
+          text: block.heading_1.rich_text[0].plain_text,
+          type: 'heading'
+        }
+      }
+
+      if ('heading_2' in block) {
+        return {
+          id: block.id,
+          level: 2,
+          text: block.heading_2.rich_text[0].plain_text,
+          type: 'heading'
+        }
+      }
+
+      if ('heading_3' in block) {
+        return {
+          id: block.id,
+          level: 2,
+          text: block.heading_3.rich_text[0].plain_text,
+          type: 'heading'
+        }
+      }
+
+      if ('image' in block) {
+        let img: Blob
+        let size: ISizeCalculationResult
+
+        try {
+          logger.info('fetching image')
+          img = await wretch(block.image.file.url).get().blob()
+          logger.success(`fetched image of size ${img.size} bytes`)
+        } catch (e) {
+          logger.error('failed to fetch image')
+          throw e
+        }
+
+        try {
+          logger.info(`uploading ${block.id} to blobs`)
+          await blob_store.set(`${post_info.id}/${block.id}`, img)
+          logger.success('image uploaded')
+        } catch (e) {
+          logger.error(`failed to upload ${block.id}`)
+          throw e
+        }
+
+        try {
+          logger.info('calculating image size')
+          const buffer = await img.arrayBuffer()
+          size = imageSize(new Uint8Array(buffer))
+          if (!size.height || !size.width) {
+            logger.error('height or width is invalid')
+            throw new Error('height or width is invalid')
+          }
+        } catch (e) {
+          logger.error('failed to calculate image size')
+          throw e
+        }
+
+        return {
+          alt: block.image.caption[0].plain_text,
+          height: size.height,
+          id: block.id,
+          type: 'image',
+          width: size.width
+        }
+      }
+
+      if ('paragraph' in block) {
+        if (block.paragraph.rich_text.length) {
+          return {
+            id: block.id,
+            text: block.paragraph.rich_text[0].plain_text,
+            type: 'paragraph'
+          }
+        } else {
+          logger.warn(`skipping paragraph ${block.id} as it's empty`)
+        }
+      }
+    })
+  )) as Array<TNBlock>
 
   const title = post_info.properties.Title.title[0].plain_text
 
-  const post_cache : TNCache = {
+  const post_cache: TNCache = {
     blocks: blocks.filter(Boolean),
     cached_at: formatISO(Date.now()),
     id,
@@ -269,5 +304,4 @@ async function generate_cached_entry(id : string, file : string) : Promise<TNCac
   }
 
   return post_cache
-
 }

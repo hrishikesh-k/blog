@@ -5,11 +5,18 @@ const config = {
   bracketSpacing: false,
   embeddedLanguageFormatting: 'off',
   endOfLine: 'lf',
-  filepath: undefined,
   htmlWhitespaceSensitivity: 'strict',
   insertPragma: false,
   jsxSingleQuote: true,
-  parser: undefined,
+  overrides: [
+    {
+      files: '*.svelte',
+      options: {
+        parser: 'svelte'
+      }
+    }
+  ],
+  plugins: ['prettier-plugin-svelte', 'prettier-plugin-tailwindcss'],
   printWidth: 80,
   proseWrap: 'always',
   quoteProps: 'consistent',
@@ -17,7 +24,16 @@ const config = {
   semi: false,
   singleAttributePerLine: true,
   singleQuote: true,
+  svelteAllowShorthand: true,
+  svelteIndentScriptAndStyle: true,
+  svelteSortOrder: 'options-scripts-markup-styles',
+  svelteStrictMode: true,
   tabWidth: 2,
+  tailwindAttributes: [],
+  tailwindConfig: './packages/site/tailwind.config.ts',
+  tailwindFunctions: ['cva'],
+  tailwindPreserveDuplicates: false,
+  tailwindPreserveWhitespace: false,
   trailingComma: 'none',
   useTabs: false,
   vueIndentScriptAndStyle: true

@@ -1,7 +1,7 @@
 import type {Config} from '@netlify/edge-functions'
 import {HBlob} from '~/lib/server/constants.ts'
 
-export default async function (req : Request) {
+export default async function (req: Request) {
   const url = new URL(req.url)
   const segments = url.pathname.split('/')
   const blobs = new HBlob('img')
@@ -14,7 +14,8 @@ export default async function (req : Request) {
   })
 }
 
-export const config : Config = {
+export const config: Config = {
   cache: 'manual',
-  pattern: '^\\/images(\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}){2}$'
+  pattern:
+    '^\\/images(\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}){2}$'
 }

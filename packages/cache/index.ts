@@ -8,10 +8,7 @@ const action = argv[2].slice(2)
 const logger = new HLogger('@hrishikeshk/cache')
 const svelte_kit_cache_dir = join(cwd(), '../site/.svelte-kit/cache')
 
-if (![
-  'restore',
-  'save'
-].includes(action)) {
+if (!['restore', 'save'].includes(action)) {
   logger.error(`invalid action ${action}`)
   exit()
 }
@@ -23,9 +20,7 @@ if (env['NETLIFY'] !== 'true') {
 
 const action_status = await bindOpts({
   cacheDir: env['NETLIFY_CACHE_DIR'] || '/opt/build/cache'
-})[action]([
-  svelte_kit_cache_dir
-])
+})[action]([svelte_kit_cache_dir])
 
 if (action_status) {
   logger.success(`successfully ${action}d ${svelte_kit_cache_dir}`)

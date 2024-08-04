@@ -32,7 +32,7 @@ const dirs_to_delete = [
   utils_dist_dir
 ]
 
-dirs_to_delete.forEach(d => {
+dirs_to_delete.forEach((d) => {
   try {
     logger.info(`deleting ${d}`)
     rmSync(d, {

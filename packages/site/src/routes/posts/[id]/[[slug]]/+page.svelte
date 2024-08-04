@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CNotionImage from '~/components/c-image.svelte'
+  import CNotionImage from '~/components/c-notion-image.svelte'
   import {page} from '$app/stores'
   import type {PageData} from './$types'
   export let data : PageData

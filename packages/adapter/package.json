@@ -14,7 +14,7 @@
   },
   "name": "@hrishikeshk/adapter",
   "private": true,
-  "scripts":  {
+  "scripts": {
     "build": "tsc"
   },
   "type": "module",

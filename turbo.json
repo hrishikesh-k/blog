@@ -3,88 +3,54 @@
   "tasks": {
     "@hrishikeshk/adapter#build": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/utils#build"
-      ]
+      "dependsOn": ["@hrishikeshk/utils#build"]
     },
     "@hrishikeshk/archive#build": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/utils#build"
-      ]
+      "dependsOn": ["@hrishikeshk/utils#build"]
     },
     "@hrishikeshk/archive#clean": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/archive#build"
-      ]
+      "dependsOn": ["@hrishikeshk/archive#build"]
     },
     "@hrishikeshk/cache#build": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/site#check"
-      ]
+      "dependsOn": ["@hrishikeshk/site#check"]
     },
     "@hrishikeshk/cache#restore": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/cache#build"
-      ],
-      "passThroughEnv": [
-        "NETLIFY",
-        "NETLIFY_CACHE_DIR"
-      ]
+      "dependsOn": ["@hrishikeshk/cache#build"],
+      "passThroughEnv": ["NETLIFY", "NETLIFY_CACHE_DIR"]
     },
     "@hrishikeshk/cache#save": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/site#build"
-      ],
-      "passThroughEnv": [
-        "NETLIFY",
-        "NETLIFY_CACHE_DIR"
-      ]
+      "dependsOn": ["@hrishikeshk/site#build"],
+      "passThroughEnv": ["NETLIFY", "NETLIFY_CACHE_DIR"]
     },
     "@hrishikeshk/image#build": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/site#sync"
-      ]
+      "dependsOn": ["@hrishikeshk/site#sync"]
     },
     "@hrishikeshk/image#generate": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/image#build"
-      ]
+      "dependsOn": ["@hrishikeshk/image#build"]
     },
     "@hrishikeshk/site#build": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/cache#restore"
-      ],
-      "passThroughEnv": [
-        "NETLIFY_API_KEY",
-        "NETLIFY_SITE_ID",
-        "NOTION_API_KEY"
-      ]
+      "dependsOn": ["@hrishikeshk/cache#restore"],
+      "passThroughEnv": ["NETLIFY_API_KEY", "NETLIFY_SITE_ID", "NOTION_API_KEY"]
     },
     "@hrishikeshk/site#check": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/image#generate"
-      ]
+      "dependsOn": ["@hrishikeshk/image#generate"]
     },
     "@hrishikeshk/site#deploy": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/cache#save"
-      ]
+      "dependsOn": ["@hrishikeshk/cache#save"]
     },
     "@hrishikeshk/site#dev": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/image#generate"
-      ],
+      "dependsOn": ["@hrishikeshk/image#generate"],
       "passThroughEnv": [
         "NETLIFY_API_KEY",
         "NETLIFY_SITE_ID",
@@ -94,14 +60,8 @@
     },
     "@hrishikeshk/site#sync": {
       "cache": false,
-      "dependsOn": [
-        "@hrishikeshk/adapter#build"
-      ],
-      "passThroughEnv": [
-        "NETLIFY_API_KEY",
-        "NETLIFY_SITE_ID",
-        "NOTION_API_KEY"
-      ]
+      "dependsOn": ["@hrishikeshk/adapter#build"],
+      "passThroughEnv": ["NETLIFY_API_KEY", "NETLIFY_SITE_ID", "NOTION_API_KEY"]
     },
     "@hrishikeshk/utils#build": {
       "cache": false
