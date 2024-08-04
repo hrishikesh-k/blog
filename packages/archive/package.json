@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@hrishikeshk/utils": "*"
+  },
+  "name": "@hrishikeshk/archive",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "clean": "node ./dist/index.js"
+  },
+  "type": "module",
+  "version": "0.0.1"
+}

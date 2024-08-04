@@ -9,6 +9,7 @@
   "packageManager": "npm@10.8.2",
   "private": true,
   "scripts": {
+    "clean": "turbo run clean",
     "deploy": "dotenv -- netlify build --filter=@hrishikeshk/site --offline",
     "dev": "dotenv -- netlify dev --filter=@hrishikeshk/site --offline"
   },
