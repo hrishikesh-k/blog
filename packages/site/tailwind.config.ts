@@ -104,7 +104,7 @@ export default {
     justifySelf: false,
     letterSpacing: false,
     lineClamp: false,
-    lineHeight: false,
+    lineHeight: true,
     listStyleImage: false,
     listStylePosition: false,
     listStyleType: false,

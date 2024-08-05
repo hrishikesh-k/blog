@@ -1,24 +1,15 @@
 <script lang="ts">
   import {onMount} from 'svelte'
   export let alt : string
-  export let max_width : number = 1200
+  export let max_width : number = 1920
   export let height : number
   export let src : string
   export let width : number
-  const preset_widths = [
-    360,
-    640,
-    768,
-    1024,
-    1200
-  ]
+  const preset_widths = [320, 375, 414, 640, 768, 1024, 1280, 1440, 1920]
   function generate_image_cdn_url(w : number) {
     return `/.netlify/images?url=/images/${src}&w=${w}`
   }
-  function lt_max_width(num : number) {
-    return num < max_width
-  }
-  $: widths = preset_widths.filter(lt_max_width).concat([
+  $: widths = preset_widths.filter(n => n < max_width).concat([
     max_width
   ])
   onMount(() => {

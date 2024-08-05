@@ -30,6 +30,7 @@ export async function load_all_posts(logger: HLogger) {
       const all_post_cache: {
         deploy_id: string
         posts: Array<{
+          description: string
           id: string
           slug: string
           title: string
@@ -93,6 +94,7 @@ export async function load_all_posts(logger: HLogger) {
           p.properties.Status.status.name === 'Published'
       )
       .map((p) => ({
+        description: p.properties.Description.rich_text[0].plain_text,
         id: p.id,
         slug: slugify(p.properties.Title.title[0].plain_text),
         title: p.properties.Title.title[0].plain_text,

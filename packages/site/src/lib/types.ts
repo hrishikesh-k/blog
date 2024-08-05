@@ -97,6 +97,11 @@ export type TNPage = TNRes<
         id: 'lXAx'
         type: 'date'
       }
+      Description: {
+        id: 'CNVd'
+        rich_text: Array<TNText>
+        type: 'rich_text'
+      }
       Status: {
         id: 'z%5C%60r'
         status: {

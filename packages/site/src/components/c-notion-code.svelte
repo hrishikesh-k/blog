@@ -1,20 +1,18 @@
 <script lang="ts">
-  import {createHighlighterCore} from 'shiki/core'
+  import {createHighlighterCore, loadWasm} from 'shiki/core'
   import {onMount} from 'svelte'
-  import shikiLangTypescript from 'shiki/langs/typescript.mjs'
-  import shikiThemeGitHubDarkDefault from 'shiki/themes/github-dark-default.mjs'
-  import shikiWasm from 'shiki/wasm'
   export let code : string
-  export let lang = 'typescript'
+  export let lang : 'typescript'
   let code_output = '<pre></pre>'
   onMount(async () => {
+    await loadWasm(import('shiki/wasm'))
     const highlighter = await createHighlighterCore({
       langs: [
-        shikiLangTypescript
+        import('shiki/langs/typescript.mjs')
       ],
-      loadWasm: shikiWasm,
       themes: [
-        shikiThemeGitHubDarkDefault
+        import('shiki/themes/github-dark-default.mjs'),
+        import('shiki/themes/github-light-default.mjs')
       ]
     })
     code_output = highlighter.codeToHtml(code, {

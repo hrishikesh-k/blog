@@ -5,6 +5,13 @@
   import type {PageData} from './$types'
   export let data : PageData
 </script>
+<svelte:head>
+  <title>{data.post.title} | Blog</title>
+  {#if !$page.params.slug}
+    <!-- TODO: Change domain -->
+    <link href="https://www.hrishikeshk.blog/posts/{data.post.id}/{data.post.slug}/" rel="canonical"/>
+  {/if}
+</svelte:head>
 <h1>{data.post.title}</h1>
 {#each data.post.blocks as block}
   {#if block.type === 'code'}
@@ -14,9 +21,3 @@
     <CNotionImage alt={block.alt} height={block.height} src="{data.post.id}/{block.id}" width={block.width}/>
   {/if}
 {/each}
-<svelte:head>
-  {#if !$page.params.slug}
-    <!-- TODO: Change domain -->
-    <link href="https://www.hrishikeshk.blog/posts/{data.post.id}/{data.post.slug}/" rel="canonical"/>
-  {/if}
-</svelte:head>
