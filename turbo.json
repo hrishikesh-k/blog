@@ -20,12 +20,12 @@
     "@hrishikeshk/cache#restore": {
       "cache": false,
       "dependsOn": ["@hrishikeshk/cache#build"],
-      "passThroughEnv": ["NETLIFY", "NETLIFY_CACHE_DIR"]
+      "passThroughEnv": ["NETLIFY"]
     },
     "@hrishikeshk/cache#save": {
       "cache": false,
       "dependsOn": ["@hrishikeshk/site#build"],
-      "passThroughEnv": ["NETLIFY", "NETLIFY_CACHE_DIR"]
+      "passThroughEnv": ["NETLIFY"]
     },
     "@hrishikeshk/image#build": {
       "cache": false,

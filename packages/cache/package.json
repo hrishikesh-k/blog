@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@hrishikeshk/utils": "*",
-    "@netlify/cache-utils": "5.1.5"
+    "@netlify/cache-utils": "5.1.6"
   },
   "name": "@hrishikeshk/cache",
   "private": true,

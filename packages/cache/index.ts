@@ -1,6 +1,5 @@
 import {argv, cwd, env, exit} from 'node:process'
-// @ts-ignore
-import {bindOpts} from '@netlify/cache-utils'
+import {bindOpts, getCacheDir} from '@netlify/cache-utils'
 import {HLogger} from '@hrishikeshk/utils'
 import {join} from 'node:path'
 
@@ -19,8 +18,8 @@ if (env['NETLIFY'] !== 'true') {
 }
 
 const action_status = await bindOpts({
-  cacheDir: env['NETLIFY_CACHE_DIR'] || '/opt/build/cache'
-})[action]([svelte_kit_cache_dir])
+  cacheDir: getCacheDir()
+})[action as 'restore' | 'save']([svelte_kit_cache_dir], {})
 
 if (action_status) {
   logger.success(`successfully ${action}d ${svelte_kit_cache_dir}`)
