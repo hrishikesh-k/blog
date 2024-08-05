@@ -50,10 +50,10 @@ export const load: PageServerLoad = async (event) => {
 
   let post_cache: TNCache
 
-  const all_posts = await load_all_posts(logger)
+  const all_posts_cache = await load_all_posts(logger)
 
   logger.info(`looking up ${event.params.id} in ${all_posts_cache_file}`)
-  const post_from_all_post_cache = all_posts.posts.find(
+  const post_from_all_post_cache = all_posts_cache.posts.find(
     (p) => p.id === event.params.id
   )
 
@@ -81,11 +81,15 @@ export const load: PageServerLoad = async (event) => {
     }
   } else {
     logger.warn(`${post_cache_file} missing, generating cache`)
-    post_cache = await generate_cached_entry(event.params.id, post_cache_file)
+    post_cache = await generate_cached_entry(
+      post_from_all_post_cache.id,
+      post_from_all_post_cache.notion_id,
+      post_cache_file
+    )
     return {
       post: {
         blocks: post_cache.blocks,
-        id: post_cache.id,
+        id: event.params.id,
         slug: post_cache.slug,
         title: post_cache.title
       }
@@ -102,7 +106,11 @@ export const load: PageServerLoad = async (event) => {
     ) !== 1
   ) {
     logger.warn(`${post_cache_file} is stale, generating fresh cache`)
-    post_cache = await generate_cached_entry(event.params.id, post_cache_file)
+    post_cache = await generate_cached_entry(
+      post_from_all_post_cache.id,
+      post_from_all_post_cache.notion_id,
+      post_cache_file
+    )
   } else {
     logger.success(`${post_cache_file} is fresh`)
   }
@@ -110,7 +118,7 @@ export const load: PageServerLoad = async (event) => {
   return {
     post: {
       blocks: post_cache.blocks,
-      id: post_cache.id,
+      id: event.params.id,
       slug: post_cache.slug,
       title: post_cache.title
     }
@@ -119,6 +127,7 @@ export const load: PageServerLoad = async (event) => {
 
 async function generate_cached_entry(
   id: string,
+  notion_id: string,
   file: string
 ): Promise<TNCache> {
   const blob_store = new HBlob('img')
@@ -162,13 +171,11 @@ async function generate_cached_entry(
         throw e
       }
     }
-  } else {
-    logger.success(`no blobs to delete`)
   }
 
   try {
     logger.info('fetching blocks from Notion')
-    post_blocks = await notion.get(`/blocks/${id}/children`).json()
+    post_blocks = await notion.get(`/blocks/${notion_id}/children`).json()
     logger.success(`received ${post_blocks.results.length} blocks`)
   } catch (e) {
     logger.error('failed to fetch blocks')
@@ -177,7 +184,7 @@ async function generate_cached_entry(
 
   try {
     logger.info('fetching info from Notion')
-    post_info = await notion.get(`/pages/${id}`).json<TNPage>()
+    post_info = await notion.get(`/pages/${notion_id}`).json<TNPage>()
     logger.success('received info from Notion')
   } catch (e) {
     logger.error('failed to fetch post info')
@@ -190,8 +197,9 @@ async function generate_cached_entry(
 
       if ('code' in block) {
         return {
-          id: block.id,
+          id: block.id.slice(0, 8),
           language: block.code.language,
+          notion_id: block.id,
           text: block.code.rich_text[0].plain_text,
           type: 'code'
         }
@@ -199,8 +207,9 @@ async function generate_cached_entry(
 
       if ('heading_1' in block) {
         return {
-          id: block.id,
+          id: block.id.slice(0, 8),
           level: 1,
+          notion_id: block.id,
           text: block.heading_1.rich_text[0].plain_text,
           type: 'heading'
         }
@@ -208,8 +217,9 @@ async function generate_cached_entry(
 
       if ('heading_2' in block) {
         return {
-          id: block.id,
+          id: block.id.slice(0, 8),
           level: 2,
+          notion_id: block.id,
           text: block.heading_2.rich_text[0].plain_text,
           type: 'heading'
         }
@@ -217,14 +227,17 @@ async function generate_cached_entry(
 
       if ('heading_3' in block) {
         return {
-          id: block.id,
+          id: block.id.slice(0, 8),
           level: 2,
+          notion_id: block.id,
           text: block.heading_3.rich_text[0].plain_text,
           type: 'heading'
         }
       }
 
       if ('image' in block) {
+        const img_id = block.id.slice(0, 8)
+
         let img: Blob
         let size: ISizeCalculationResult
 
@@ -238,11 +251,11 @@ async function generate_cached_entry(
         }
 
         try {
-          logger.info(`uploading ${block.id} to blobs`)
-          await blob_store.set(`${post_info.id}/${block.id}`, img)
+          logger.info(`uploading ${img_id} to blobs`)
+          await blob_store.set(`${id}/${img_id}`, img)
           logger.success('image uploaded')
         } catch (e) {
-          logger.error(`failed to upload ${block.id}`)
+          logger.error(`failed to upload ${img_id}`)
           throw e
         }
 
@@ -262,7 +275,8 @@ async function generate_cached_entry(
         return {
           alt: block.image.caption[0].plain_text,
           height: size.height,
-          id: block.id,
+          id: img_id,
+          notion_id: block.id,
           type: 'image',
           width: size.width
         }
@@ -271,7 +285,8 @@ async function generate_cached_entry(
       if ('paragraph' in block) {
         if (block.paragraph.rich_text.length) {
           return {
-            id: block.id,
+            id: block.id.slice(0, 8),
+            notion_id: block.id,
             text: block.paragraph.rich_text[0].plain_text,
             type: 'paragraph'
           }

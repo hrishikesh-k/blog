@@ -9,7 +9,17 @@ import {HLogger} from '@hrishikeshk/utils'
 import type {TNPage, TNRes} from '~/lib/types.ts'
 import {slugify} from '~/lib/functions.ts'
 
-export async function load_all_posts(logger: HLogger) {
+export async function load_all_posts(logger: HLogger): Promise<{
+  deploy_id: string
+  posts: Array<{
+    description: string
+    id: string
+    notion_id: string
+    slug: string
+    title: string
+    updated_at: string
+  }>
+}> {
   if (!existsSync(cache_dir)) {
     try {
       logger.info(`${cache_dir} missing, creating`)
@@ -27,16 +37,7 @@ export async function load_all_posts(logger: HLogger) {
   if (existsSync(all_posts_cache_file)) {
     try {
       logger.info(`${all_posts_cache_file} exists, reading from cache`)
-      const all_post_cache: {
-        deploy_id: string
-        posts: Array<{
-          description: string
-          id: string
-          slug: string
-          title: string
-          updated_at: string
-        }>
-      } = JSON.parse(
+      const all_post_cache = JSON.parse(
         readFileSync(all_posts_cache_file, {
           encoding: 'utf-8'
         })
@@ -85,7 +86,7 @@ export async function load_all_posts(logger: HLogger) {
   }
 
   const all_posts_filtered = {
-    deploy_id: env['DEPLOY_ID'],
+    deploy_id: env['DEPLOY_ID']!,
     posts: all_posts_from_notion.results
       .filter(
         (p) =>
@@ -95,7 +96,8 @@ export async function load_all_posts(logger: HLogger) {
       )
       .map((p) => ({
         description: p.properties.Description.rich_text[0].plain_text,
-        id: p.id,
+        id: p.id.slice(0, 8),
+        notion_id: p.id,
         slug: slugify(p.properties.Title.title[0].plain_text),
         title: p.properties.Title.title[0].plain_text,
         updated_at: p.last_edited_time

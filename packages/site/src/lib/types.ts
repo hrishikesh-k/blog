@@ -35,7 +35,10 @@ export type TNBlobList = {
   directories: Array<string>
 }
 
-export type TNBlock =
+export type TNBlock = {
+  id: string
+  notion_id: string
+} & (
   | {
       language: 'typescript'
       text: string
@@ -49,7 +52,6 @@ export type TNBlock =
   | {
       alt: string
       height: number
-      id: string
       type: 'image'
       width: number
     }
@@ -57,6 +59,7 @@ export type TNBlock =
       text: string
       type: 'paragraph'
     }
+)
 
 export type TNBParagraph = TNBText<'paragraph'>
 

@@ -16,6 +16,5 @@ export default async function (req: Request) {
 
 export const config: Config = {
   cache: 'manual',
-  pattern:
-    '^\\/images(\\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}){2}$'
+  pattern: '^\\/images(\\/[0-9a-fA-F]{8}){2}$'
 }
