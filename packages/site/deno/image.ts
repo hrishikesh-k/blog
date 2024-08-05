@@ -8,8 +8,7 @@ export default async function (req: Request) {
   const image = await blobs.get(`${segments[2]}/${segments[3]}`)
   return new Response(image, {
     headers: {
-      'cache-control': 'immutable, public, max-age=31536000',
-      'content-type': image.type
+      'cache-control': 'immutable, public, max-age=31536000'
     }
   })
 }

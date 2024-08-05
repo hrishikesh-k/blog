@@ -17,7 +17,7 @@ export class HBlob {
       .auth(`Bearer ${env['NETLIFY_API_KEY']}`)
   }
   async get(key: string) {
-    return await this.#api.get(`/${key}`).blob()
+    return await this.#api.get(`/${key}`).arrayBuffer()
   }
   async delete(key: string) {
     return await this.#api.delete(`/${key}`).res()
@@ -30,12 +30,12 @@ export class HBlob {
       .get()
       .json<TNBlobList>()
   }
-  async set(key: string, blob: Blob) {
+  async set(key: string, buffer: ArrayBuffer) {
     return await this.#api
       .headers({
         'content-type': 'application/octet-stream'
       })
-      .put(blob, `/${key}`)
+      .put(buffer, `/${key}`)
       .res()
   }
 }

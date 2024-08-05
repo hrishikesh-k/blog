@@ -238,13 +238,13 @@ async function generate_cached_entry(
       if ('image' in block) {
         const img_id = block.id.slice(0, 8)
 
-        let img: Blob
+        let img: ArrayBuffer
         let size: ISizeCalculationResult
 
         try {
           logger.info('fetching image')
-          img = await wretch(block.image.file.url).get().blob()
-          logger.success(`fetched image of size ${img.size} bytes`)
+          img = await wretch(block.image.file.url).get().arrayBuffer()
+          logger.success(`fetched image of size ${img.byteLength} bytes`)
         } catch (e) {
           logger.error('failed to fetch image')
           throw e
@@ -261,8 +261,7 @@ async function generate_cached_entry(
 
         try {
           logger.info('calculating image size')
-          const buffer = await img.arrayBuffer()
-          size = imageSize(new Uint8Array(buffer))
+          size = imageSize(new Uint8Array(img))
           if (!size.height || !size.width) {
             logger.error('height or width is invalid')
             throw new Error('height or width is invalid')
