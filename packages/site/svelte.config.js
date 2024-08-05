@@ -9,7 +9,12 @@ const config = {
       '~/*': './src/*'
     },
     prerender: {
-      handleHttpError: 'warn'
+      handleHttpError(details) {
+        if (details.path.startsWith('/.netlify/images')) {
+          return
+        }
+        throw new Error(details.message)
+      }
     }
   },
   preprocess: vitePreprocess()

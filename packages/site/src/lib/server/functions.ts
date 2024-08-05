@@ -3,6 +3,7 @@ import {
   cache_dir,
   notion
 } from '~/lib/server/constants.ts'
+import {env} from 'node:process'
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {HLogger} from '@hrishikeshk/utils'
 import type {TNPage, TNRes} from '~/lib/types.ts'
@@ -24,21 +25,31 @@ export async function load_all_posts(logger: HLogger) {
   logger.info('loading all posts')
 
   if (existsSync(all_posts_cache_file)) {
-    // TODO: don't read this if old than a few minutes
     try {
       logger.info(`${all_posts_cache_file} exists, reading from cache`)
-      const all_posts: Array<{
-        id: string
-        slug: string
-        title: string
-        updated_at: string
-      }> = JSON.parse(
+      const all_post_cache: {
+        deploy_id: string
+        posts: Array<{
+          id: string
+          slug: string
+          title: string
+          updated_at: string
+        }>
+      } = JSON.parse(
         readFileSync(all_posts_cache_file, {
           encoding: 'utf-8'
         })
       )
-      logger.success(`read ${all_posts.length} posts from cache`)
-      return all_posts
+      logger.success(`read ${all_post_cache.posts.length} posts from cache`)
+      if (env['DEPLOY_ID'] === all_post_cache.deploy_id) {
+        logger.success(
+          'current deploy matches the cached data, re-using the cache'
+        )
+        return all_post_cache
+      }
+      logger.warn(
+        'current deploy and cache does not match, re-fetching the data'
+      )
     } catch (e) {
       logger.error(`failed to read ${all_posts_cache_file} or parse it as JSON`)
       throw e
@@ -72,23 +83,26 @@ export async function load_all_posts(logger: HLogger) {
     throw e
   }
 
-  const all_posts_filtered = all_posts_from_notion.results
-    .filter(
-      (p) =>
-        !p.archived &&
-        !p.in_trash &&
-        p.properties.Status.status.name === 'Published'
-    )
-    .map((p) => ({
-      id: p.id,
-      slug: slugify(p.properties.Title.title[0].plain_text),
-      title: p.properties.Title.title[0].plain_text,
-      updated_at: p.last_edited_time
-    }))
+  const all_posts_filtered = {
+    deploy_id: env['DEPLOY_ID'],
+    posts: all_posts_from_notion.results
+      .filter(
+        (p) =>
+          !p.archived &&
+          !p.in_trash &&
+          p.properties.Status.status.name === 'Published'
+      )
+      .map((p) => ({
+        id: p.id,
+        slug: slugify(p.properties.Title.title[0].plain_text),
+        title: p.properties.Title.title[0].plain_text,
+        updated_at: p.last_edited_time
+      }))
+  }
 
   try {
     logger.info(
-      `writing ${all_posts_filtered.length} filtered entries to ${all_posts_cache_file}`
+      `writing ${all_posts_filtered.posts.length} filtered entries to ${all_posts_cache_file}`
     )
     writeFileSync(all_posts_cache_file, JSON.stringify(all_posts_filtered), {
       encoding: 'utf-8'

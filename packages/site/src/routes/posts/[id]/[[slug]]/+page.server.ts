@@ -29,14 +29,14 @@ import wretch from 'wretch'
 const logger = new HLogger('/posts/[id]/[[slug]]/+page.server.ts')
 
 export const entries: EntryGenerator = async () => {
-  const all_posts = await load_all_posts(logger)
+  const all_posts_cache = await load_all_posts(logger)
 
-  return all_posts
+  return all_posts_cache.posts
     .map((p) => ({
       id: p.id
     }))
     .concat(
-      all_posts.map((p) => ({
+      all_posts_cache.posts.map((p) => ({
         id: p.id,
         slug: p.slug
       }))
@@ -53,7 +53,7 @@ export const load: PageServerLoad = async (event) => {
   const all_posts = await load_all_posts(logger)
 
   logger.info(`looking up ${event.params.id} in ${all_posts_cache_file}`)
-  const post_from_all_post_cache = all_posts.find(
+  const post_from_all_post_cache = all_posts.posts.find(
     (p) => p.id === event.params.id
   )
 
