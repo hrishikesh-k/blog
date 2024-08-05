@@ -1,9 +1,7 @@
 <script lang="ts">
   import CButton from '~/components/c-button.svelte'
   import PAnimation from '~/partials/p-animation/p-animation.svelte'
-  import PHeader from '~/partials/p-header.svelte'
 </script>
-<PHeader/>
 <div class="box-border gap-x-16 grid grid-cols-1 h-full items-center lg:grid-cols-2 md:grid-cols-3 px-4 sm:grid-cols-2">
   <div class="col-span-1 flex flex-col gap-y-4 items-center">
     <div class="bg-black h-48 w-48"></div>

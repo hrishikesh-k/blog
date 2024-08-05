@@ -1,13 +1,15 @@
 import {argv, cwd, env, exit} from 'node:process'
-import {bindOpts, getCacheDir} from '@netlify/cache-utils'
+import {bindOpts} from '@netlify/cache-utils'
 import {HLogger} from '@hrishikeshk/utils'
 import {join} from 'node:path'
 
 const action = argv[2].slice(2)
+const allowed_actions = ['restore', 'save'] as const
 const logger = new HLogger('@hrishikeshk/cache')
 const svelte_kit_cache_dir = join(cwd(), '../site/.svelte-kit/cache')
 
-if (!['restore', 'save'].includes(action)) {
+/* @ts-ignore: https://github.com/microsoft/TypeScript/issues/26255 */
+if (!allowed_actions.includes(action)) {
   logger.error(`invalid action ${action}`)
   exit()
 }
@@ -18,8 +20,8 @@ if (env['NETLIFY'] !== 'true') {
 }
 
 const action_status = await bindOpts({
-  cacheDir: getCacheDir()
-})[action as 'restore' | 'save']([svelte_kit_cache_dir], {})
+  cacheDir: '/opt/build/cache'
+})[action as typeof allowed_actions[number]]([svelte_kit_cache_dir], {})
 
 if (action_status) {
   logger.success(`successfully ${action}d ${svelte_kit_cache_dir}`)

@@ -7,6 +7,7 @@
   export let label = ''
   export let link = ''
   export let intent :'filled' | 'ghost' = 'ghost'
+  export let size : 'md' | 'sm' = 'md'
   export let title = ''
   export let type : 'button' | 'reset' | 'submit' = 'button'
   const btn_class = cva([
@@ -15,7 +16,6 @@
     'cursor-pointer',
     'duration-300',
     'flex',
-    'font-bold',
     'font-inherit',
     'gap-x-1',
     'hover:text-sky-400',
@@ -26,12 +26,24 @@
     'no-underline',
     'text-inherit'
   ], {
+    compoundVariants: [{
+      class: [
+        'hover:after:scale-100'
+      ],
+      intent: 'ghost',
+      size: 'md'
+    }, {
+      class: [
+        'hover:after:scale-x-100'
+      ],
+      intent: 'ghost',
+      size: 'sm'
+    }],
     variants: {
       intent: {
         filled: [
           'bg-sky-800',
-          'px-3',
-          'py-2',
+          'p-1.5',
           'rounded'
         ],
         ghost: [
@@ -46,10 +58,19 @@
           'after:-z-10',
           'bg-transparent',
           'hover:after:bg-sky-900',
-          'hover:after:scale-110',
           'p-1.5',
           'relative',
           'z-10'
+        ]
+      },
+      size: {
+        md: [
+          'font-bold'
+        ],
+        sm: [
+          'font-semibold',
+          'p-1',
+          'text-sm'
         ]
       }
     }
@@ -121,7 +142,10 @@
     props = computed_props
   }
 </script>
-<svelte:element class={btn_class({intent})} {...props} this="{link.length ? 'a' : element ? element : 'button'}">
+<svelte:element class={btn_class({
+  intent,
+  size
+})} {...props} this="{link.length ? 'a' : element ? element : 'button'}">
   {#if icon.length}
     <CIcon name={icon}/>
   {/if}

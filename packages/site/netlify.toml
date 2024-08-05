@@ -5,3 +5,8 @@
 [dev]
   command = "turbo run @hrishikeshk/site#dev"
   targetPort = 5173
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    x-robots-tag = "noindex"

@@ -3,6 +3,7 @@
   import LazyLoad from 'vanilla-lazyload'
   import {onMount} from 'svelte'
   import {navigating} from '$app/stores'
+  import PHeader from '~/partials/p-header.svelte'
   import {slide} from 'svelte/transition'
   import '~/tailwind.css'
   onMount(() => {
@@ -26,4 +27,5 @@
     easing: expoOut
   }}></div>
 {/if}
+<PHeader/>
 <slot/>
