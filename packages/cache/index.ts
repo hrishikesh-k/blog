@@ -21,7 +21,7 @@ if (env['NETLIFY'] !== 'true') {
 
 const action_status = await bindOpts({
   cacheDir: '/opt/build/cache'
-})[action as typeof allowed_actions[number]]([svelte_kit_cache_dir], {})
+})[action as (typeof allowed_actions)[number]]([svelte_kit_cache_dir], {})
 
 if (action_status) {
   logger.success(`successfully ${action}d ${svelte_kit_cache_dir}`)

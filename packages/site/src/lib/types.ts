@@ -119,7 +119,7 @@ export type TNPage = TNRes<
         multi_select: Array<{
           color: 'default'
           id: string
-          name: string
+          name: 'Functions'
         }>
         type: 'multi_select'
       }

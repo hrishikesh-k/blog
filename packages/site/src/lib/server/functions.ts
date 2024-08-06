@@ -100,7 +100,7 @@ export async function load_all_posts(logger: HLogger): Promise<{
         id: p.id.slice(0, 8),
         notion_id: p.id,
         slug: slugify(p.properties.Title.title[0].plain_text),
-        tags: p.properties.Tags.multi_select.map(t => t.name),
+        tags: p.properties.Tags.multi_select.map((t) => t.name),
         title: p.properties.Title.title[0].plain_text,
         updated_at: p.last_edited_time
       }))
