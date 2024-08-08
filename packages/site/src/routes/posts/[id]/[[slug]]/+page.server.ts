@@ -135,19 +135,21 @@ async function generate_cached_entry(
 
   let post_blocks: TNRes<
     'block',
-    | ({
-        has_children: boolean
-        object: 'block'
-        parent: {
-          page_id: string
-          type: 'page_id'
-        }
-      } & TNBCode<'typescript'>)
-    | TNBHeading<1>
-    | TNBHeading<2>
-    | TNBHeading<3>
-    | TNBImage
-    | TNBParagraph
+    {
+      has_children: boolean
+      object: 'block'
+      parent: {
+        page_id: string
+        type: 'page_id'
+      }
+    } & (
+      | TNBCode<'typescript'>
+      | TNBHeading<1>
+      | TNBHeading<2>
+      | TNBHeading<3>
+      | TNBImage
+      | TNBParagraph
+    )
   >
 
   let post_info: TNPage

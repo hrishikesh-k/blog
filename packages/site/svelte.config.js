@@ -10,7 +10,10 @@ const config = {
     },
     prerender: {
       handleHttpError(details) {
-        if (details.path.startsWith('/.netlify/images') || details.path.startsWith('/tags/')) {
+        if (
+          details.path.startsWith('/.netlify/images') ||
+          details.path.startsWith('/tags/')
+        ) {
           return
         }
         throw new Error(details.message)
