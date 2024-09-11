@@ -1,16 +1,22 @@
 <script lang="ts">
+  // biome-ignore lint/correctness/noUnusedImports: Svelte support
   import {expoOut} from 'svelte/easing'
   import LazyLoad from 'vanilla-lazyload'
   import {onMount} from 'svelte'
+  // biome-ignore lint/correctness/noUnusedImports: Svelte support
   import {navigating} from '$app/stores'
+  // biome-ignore lint/correctness/noUnusedImports: Svelte support
   import PHeader from '~/partials/p-header.svelte'
+  // biome-ignore lint/correctness/noUnusedImports: Svelte support
   import {slide} from 'svelte/transition'
   import '~/tailwind.css'
   onMount(() => {
     window.ll = new LazyLoad({
+      // biome-ignore lint/style/useNamingConvention: LazyLoad's convention
       callback_loaded(el) {
         el.classList.remove('blur')
       },
+      // biome-ignore lint/style/useNamingConvention: LazyLoad's convention
       elements_selector: 'img'
     })
   })

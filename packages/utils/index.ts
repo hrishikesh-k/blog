@@ -2,7 +2,7 @@ import {build} from 'esbuild'
 import {builtinModules} from 'node:module'
 import chalk from 'chalk'
 
-export async function bundle_edge_function(input: string, output: string) {
+export async function bundleEdgeFunction(input: string, output: string) {
   await build({
     alias: Object.fromEntries(builtinModules.map((id) => [id, `node:${id}`])),
     bundle: true,
@@ -34,7 +34,7 @@ export class HLogger {
     this.#prefix = prefix
   }
   success(msg: string) {
-    console.log(chalk.green(`${this.prefix}: ${msg}`))
+    console.info(chalk.green(`${this.prefix}: ${msg}`))
   }
   warn(msg: string) {
     console.warn(chalk.yellow(`${this.prefix}: ${msg}`))

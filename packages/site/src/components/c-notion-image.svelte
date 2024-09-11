@@ -1,16 +1,19 @@
 <script lang="ts">
   import {onMount} from 'svelte'
   export let alt : string
-  export let max_width : number = 1920
+  // biome-ignore lint/style/useConst: Svelte support
+  export let maxWidth = 1920
   export let height : number
   export let src : string
   export let width : number
-  const preset_widths = [320, 375, 414, 640, 768, 1024, 1280, 1440, 1920]
-  function generate_image_cdn_url(w : number) {
+  const presetWidths = [320, 375, 414, 640, 768, 1024, 1280, 1440, 1920]
+  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
+  function generateImageCdnUrl(w : number) {
     return `/.netlify/images?url=/images/${src}&w=${w}`
   }
-  $: widths = preset_widths.filter(n => n < max_width).concat([
-    max_width
+  // biome-ignore lint/correctness/noUndeclaredVariables: Svelte support
+  $: widths = presetWidths.filter(n => n < maxWidth).concat([
+    maxWidth
   ])
   onMount(() => {
     window.ll.update()
@@ -34,13 +37,13 @@
   {#each widths as width, i}
     {#if i === widths.length - 1}
       {#if widths.length > 1}
-        <source data-srcset="{generate_image_cdn_url(width)}" media="(min-width: {widths[i - 1]}px)"/>
+        <source data-srcset="{generateImageCdnUrl(width)}" media="(min-width: {widths[i - 1]}px)"/>
       {:else}
-        <source data-srcset="{generate_image_cdn_url(width)}"/>
+        <source data-srcset="{generateImageCdnUrl(width)}"/>
       {/if}
     {:else}
-      <source data-srcset="{generate_image_cdn_url(width)}" media="(max-width: {width}px)"/>
+      <source data-srcset="{generateImageCdnUrl(width)}" media="(max-width: {width}px)"/>
     {/if}
   {/each}
-  <img {alt} class="block blur duration-300 h-full object-contain w-full" {height} src="{generate_image_cdn_url(64)}" {width}/>
+  <img {alt} class="block blur duration-300 h-full object-contain w-full" {height} src="{generateImageCdnUrl(64)}" {width}/>
 </picture>

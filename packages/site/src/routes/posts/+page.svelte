@@ -1,6 +1,7 @@
 <script lang="ts">
   import CButton from '~/components/c-button.svelte'
   import CIcon from '~/components/c-icon.svelte'
+  import CNotionImage from '~/components/c-notion-image.svelte'
   import {format} from 'date-fns'
   import type {PageData} from './$types'
   export let data : PageData
@@ -10,6 +11,9 @@
 </svelte:head>
 <div class="box-border max-w-7xl mx-auto py-6">
   {#each data.posts as post}
+    {#if post.cover}
+      <CNotionImage src="{post.id}/{post.id}" alt=""/>
+    {/if}
     <div class="bg-slate-900 box-border p-6 rounded-xl">
       <a class="before:absolute before:bg-current before:block before:duration-300 before:ease-in-out before:h-5 before:left-0 before:rounded-md before:w-1 box-border block font-bold hover:before:scale-y-125 leading-5 mb-4 pl-4 no-underline relative text-2xl text-current" href="/posts/{post.id}/{post.slug}/">{post.title}</a>
       <div class="flex gap-x-2 items-center mb-2">

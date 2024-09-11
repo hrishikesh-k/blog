@@ -246,9 +246,9 @@ export default {
         {
           values: Object.keys(p.theme('keyframes')).reduce(
             (o, k) => {
-              const cloned_obj = o
-              cloned_obj[k] = k
-              return cloned_obj
+              const clonedObj = o
+              clonedObj[k] = k
+              return clonedObj
             },
             {} as Record<string, string>
           )

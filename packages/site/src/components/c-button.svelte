@@ -1,16 +1,26 @@
 <script lang="ts">
+  // biome-ignore lint/correctness/noUnusedImports: Svelte support
   import CIcon from '~/components/c-icon.svelte'
   import {cva} from 'class-variance-authority'
   import type {TCIconName} from '~/lib/types.ts'
+  // biome-ignore lint/style/useConst: Svelte support
   export let element : 'div' | null = null
+  // biome-ignore lint/style/useConst: Svelte support
   export let icon : TCIconName = ''
+  // biome-ignore lint/style/useConst: Svelte support
   export let label = ''
+  // biome-ignore lint/style/useConst: Svelte support
   export let link = ''
+  // biome-ignore lint/style/useConst: Svelte support
   export let intent :'filled' | 'ghost' = 'ghost'
+  // biome-ignore lint/style/useConst: Svelte support
   export let size : 'md' | 'sm' = 'md'
+  // biome-ignore lint/style/useConst: Svelte support
   export let title = ''
+  // biome-ignore lint/style/useConst: Svelte support
   export let type : 'button' | 'reset' | 'submit' = 'button'
-  const btn_class = cva([
+  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
+  const btnClass = cva([
     'border-0',
     'box-border',
     'cursor-pointer',
@@ -75,7 +85,8 @@
       }
     }
   })
-  let link_external = false
+  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
+  let linkExternal = false
   let props : {
     'aria-label'? : string
     href? : string
@@ -84,7 +95,7 @@
     type? : typeof type
   } = {}
   $: {
-    const computed_props : typeof props = {}
+    const computedProps : typeof props = {}
 
     /*
       check the length of the link prop
@@ -105,18 +116,16 @@
             if yes, don't set the type of the button
       */
     if (link.length) {
-      computed_props.href = link
+      computedProps.href = link
       if (link.startsWith('/')) {
-        link_external = false
+        linkExternal = false
       } else {
-        link_external = true
-        computed_props.rel = 'noopener noreferrer'
-        computed_props.target = '_blank'
+        linkExternal = true
+        computedProps.rel = 'noopener noreferrer'
+        computedProps.target = '_blank'
       }
-    } else {
-      if (!element) {
-        computed_props.type = type
-      }
+    } else if (!element) {
+      computedProps.type = type
     }
 
     /*
@@ -135,14 +144,14 @@
         if element prop is provided, it would be a div which should not have this attr
         if label is provided, the button/link already has a label, so attr not required
      */
-    if (!element && !label.length) {
-      computed_props['aria-label'] = title
+    if (!(element || label.length)) {
+      computedProps['aria-label'] = title
     }
 
-    props = computed_props
+    props = computedProps
   }
 </script>
-<svelte:element class={btn_class({
+<svelte:element class={btnClass({
   intent,
   size
 })} {...props} this="{link.length ? 'a' : element ? element : 'button'}">
@@ -152,7 +161,7 @@
   {#if label.length}
     <span>{label}</span>
   {/if}
-  {#if link_external}
+  {#if linkExternal}
     <CIcon name="arrow-up-right-from-square" size={3}/>
   {/if}
 </svelte:element>

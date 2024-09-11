@@ -3,7 +3,8 @@
   import {onMount} from 'svelte'
   export let code : string
   export let lang : 'typescript'
-  let code_output = '<pre></pre>'
+  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
+  let codeOutput = '<pre></pre>'
   onMount(async () => {
     await loadWasm(import('shiki/wasm'))
     const highlighter = await createHighlighterCore({
@@ -15,10 +16,10 @@
         import('shiki/themes/github-light-default.mjs')
       ]
     })
-    code_output = highlighter.codeToHtml(code, {
+    codeOutput = highlighter.codeToHtml(code, {
       lang,
       theme: 'github-dark-default'
     })
   })
 </script>
-<div>{@html code_output}</div>
+<div>{@html codeOutput}</div>
