@@ -1,23 +1,21 @@
 <script lang="ts">
-  import {onMount} from 'svelte'
-  export let alt : string
-  // biome-ignore lint/style/useConst: Svelte support
-  export let maxWidth = 1920
-  export let height : number
-  export let src : string
-  export let width : number
-  const presetWidths = [320, 375, 414, 640, 768, 1024, 1280, 1440, 1920]
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  function generateImageCdnUrl(w : number) {
-    return `/.netlify/images?url=/images/${src}&w=${w}`
-  }
-  // biome-ignore lint/correctness/noUndeclaredVariables: Svelte support
-  $: widths = presetWidths.filter(n => n < maxWidth).concat([
-    maxWidth
-  ])
-  onMount(() => {
-    window.ll.update()
-  })
+import { onMount } from 'svelte'
+export let alt: string
+
+export let maxWidth = 1920
+export let height: number
+export let src: string
+export let width: number
+const presetWidths = [320, 375, 414, 640, 768, 1024, 1280, 1440, 1920]
+
+function generateImageCdnUrl(w: number) {
+  return `/.netlify/images?url=/images/${src}&w=${w}`
+}
+
+$: widths = presetWidths.filter((n) => n < maxWidth).concat([maxWidth])
+onMount(() => {
+  window.ll.update()
+})
 </script>
 <picture class="block overflow-hidden">
   <!--

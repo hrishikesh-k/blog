@@ -7,7 +7,9 @@ export function randomString() {
 }
 
 export function remToPx(rem: number) {
-  return rem * Number.parseFloat(getComputedStyle(document.documentElement).fontSize)
+  return (
+    rem * Number.parseFloat(getComputedStyle(document.documentElement).fontSize)
+  )
 }
 
 export function slugify(text: string) {

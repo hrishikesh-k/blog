@@ -1,10 +1,10 @@
 <script lang="ts">
-  import CButton from '~/components/c-button.svelte'
-  import CIcon from '~/components/c-icon.svelte'
-  import CNotionImage from '~/components/c-notion-image.svelte'
-  import {format} from 'date-fns'
-  import type {PageData} from './$types'
-  export let data : PageData
+import { format } from 'date-fns'
+import CButton from '~/components/c-button.svelte'
+import CIcon from '~/components/c-icon.svelte'
+import CNotionImage from '~/components/c-notion-image.svelte'
+import type { PageData } from './$types'
+export let data: PageData
 </script>
 <svelte:head>
   <title>Posts | Blog</title>

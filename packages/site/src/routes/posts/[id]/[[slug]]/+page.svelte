@@ -1,10 +1,10 @@
 <script lang="ts">
-  import CNotionCode from '~/components/c-notion-code.svelte'
-  import CNotionHeading from '~/components/c-notion-heading.svelte'
-  import CNotionImage from '~/components/c-notion-image.svelte'
-  import {page} from '$app/stores'
-  import type {PageData} from './$types'
-  export let data : PageData
+import { page } from '$app/stores'
+import CNotionCode from '~/components/c-notion-code.svelte'
+import CNotionHeading from '~/components/c-notion-heading.svelte'
+import CNotionImage from '~/components/c-notion-image.svelte'
+import type { PageData } from './$types'
+export let data: PageData
 </script>
 <svelte:head>
   <title>{data.post.title} | Blog</title>

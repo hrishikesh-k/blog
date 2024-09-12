@@ -1,25 +1,21 @@
 <script lang="ts">
-  import {computePosition, offset, shift} from '@floating-ui/dom'
-  import {randomString, remToPx} from '~/lib/functions.ts'
-  import {tick} from 'svelte'
+import { computePosition, offset, shift } from '@floating-ui/dom'
+import { tick } from 'svelte'
+import { randomString, remToPx } from '~/lib/functions.ts'
 
-  export let text : string
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  const id = randomString()
-  let button : HTMLDivElement
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  let left = 0
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  let showTooltip = false
-  let span : HTMLSpanElement
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  let top = 0
+export let text: string
+const id = randomString()
+let button: HTMLDivElement
+let left = 0
+let showTooltip = false
+let span: HTMLSpanElement
+let top = 0
 
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  async function onMouseover() {
-    showTooltip = true
-    await tick()
-    const pos = await computePosition(button!, span!, {
+async function onMouseover() {
+  showTooltip = true
+  await tick()
+  if (button && span) {
+    const pos = await computePosition(button, span, {
       middleware: [
         offset(remToPx(0.5)),
         shift({
@@ -30,11 +26,11 @@
     left = pos.x
     top = pos.y
   }
+}
 
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  function onMouseout() {
-    showTooltip = false
-  }
+function onMouseout() {
+  showTooltip = false
+}
 </script>
 <div aria-label={showTooltip ? null : text} aria-describedby={showTooltip ? id : null} class="relative" on:blur={onMouseout} on:focus={onMouseover} on:mouseover={onMouseover} on:mouseout={onMouseout} role="button" tabindex="0">
   <!-- can't use display:contents because of: https://github.com/floating-ui/floating-ui/issues/2403 -->

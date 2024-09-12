@@ -1,5 +1,5 @@
-import type {Config} from '@netlify/edge-functions'
-import {HBlob} from '~/lib/server/constants.ts'
+import type { Config } from '@netlify/edge-functions'
+import { HBlob } from '~/lib/server/constants.ts'
 
 export default async function (req: Request) {
   const url = new URL(req.url)

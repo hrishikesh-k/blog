@@ -1,8 +1,8 @@
-import {cwd, env} from 'node:process'
-import {join} from 'node:path'
-import type {TNBlobList} from '~/lib/types.ts'
-import wretch from 'wretch'
-import wretchQueryStringAddon from 'wretch/addons/queryString'
+import { join } from 'node:path'
+import { cwd, env } from 'node:process'
+import MWretch from 'wretch'
+import MWretchQueryStringAddon from 'wretch/addons/queryString'
+import type { TNBlobList } from '~/lib/types.ts'
 
 export const cacheDir = join(cwd(), '.svelte-kit/cache')
 export const allPostsCacheFile = join(cacheDir, 'all_posts.json')
@@ -10,10 +10,10 @@ export const allPostsCacheFile = join(cacheDir, 'all_posts.json')
 export class HBlob {
   #api
   constructor(storeName: string) {
-    this.#api = wretch(
+    this.#api = MWretch(
       `https://api.netlify.com/api/v1/blobs/${env.NETLIFY_SITE_ID}/${storeName}`
     )
-      .addon(wretchQueryStringAddon)
+      .addon(MWretchQueryStringAddon)
       .auth(`Bearer ${env.NETLIFY_API_KEY}`)
   }
   async get(key: string) {
@@ -40,7 +40,7 @@ export class HBlob {
   }
 }
 
-export const notion = wretch('https://api.notion.com/v1')
+export const notion = MWretch('https://api.notion.com/v1')
   .auth(`Bearer ${env.NOTION_API_KEY}`)
   .headers({
     'notion-version': '2022-06-28'

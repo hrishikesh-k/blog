@@ -1,35 +1,35 @@
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { HLogger } from '@hrishikeshk/utils'
+import { compareAsc, formatISO, parseISO } from 'date-fns'
+import MImageSize from 'image-size'
+import type { ISizeCalculationResult } from 'image-size/dist/types/interface.d.ts'
+import MWretch from 'wretch'
+import { slugify } from '~/lib/functions.ts'
 import {
-  all_posts_cache_file,
-  cache_dir,
   HBlob,
+  allPostsCacheFile,
+  cacheDir,
   notion
 } from '~/lib/server/constants.ts'
-import {compareAsc, formatISO, parseISO} from 'date-fns'
-import type {EntryGenerator, PageServerLoad} from './$types'
-import {existsSync, readFileSync, writeFileSync} from 'node:fs'
-import {HLogger} from '@hrishikeshk/utils'
-import imageSize from 'image-size'
-import type {ISizeCalculationResult} from 'image-size/dist/types/interface.d.ts'
-import {load_all_posts} from '~/lib/server/functions.ts'
-import {join} from 'node:path'
-import {slugify} from '~/lib/functions.ts'
+import { loadAllPosts } from '~/lib/server/functions.ts'
 import type {
   TNBCode,
   TNBHeading,
   TNBImage,
+  TNBParagraph,
   TNBlobList,
   TNBlock,
-  TNBParagraph,
   TNCache,
   TNPage,
   TNRes
 } from '~/lib/types.ts'
-import wretch from 'wretch'
+import type { EntryGenerator, PageServerLoad } from './$types'
 
 const logger = new HLogger('/posts/[id]/[[slug]]/+page.server.ts')
 
 export const entries: EntryGenerator = async () => {
-  const allPostsCache = await load_all_posts(logger)
+  const allPostsCache = await loadAllPosts(logger)
 
   return allPostsCache.posts
     .map((p) => ({
@@ -46,25 +46,25 @@ export const entries: EntryGenerator = async () => {
 export const load: PageServerLoad = async (event) => {
   logger.prefix = `/${Object.values(event.params).join('/')}/`
 
-  const postCacheFile = join(cache_dir, `${event.params.id}.json`)
+  const postCacheFile = join(cacheDir, `${event.params.id}.json`)
 
   let postCache: TNCache
 
-  const allPostsCache = await load_all_posts(logger)
+  const allPostsCache = await loadAllPosts(logger)
 
-  logger.info(`looking up ${event.params.id} in ${all_posts_cache_file}`)
+  logger.info(`looking up ${event.params.id} in ${allPostsCacheFile}`)
   const postFromAllPostCache = allPostsCache.posts.find(
     (p) => p.id === event.params.id
   )
 
   if (!postFromAllPostCache) {
     logger.error(
-      `${event.params.id} missing in ${all_posts_cache_file}, this is unexpected`
+      `${event.params.id} missing in ${allPostsCacheFile}, this is unexpected`
     )
     throw new Error(`${event.params.id} missing`)
   }
 
-  logger.success(`found ${event.params.id} in ${all_posts_cache_file}`)
+  logger.success(`found ${event.params.id} in ${allPostsCacheFile}`)
 
   if (existsSync(postCacheFile)) {
     try {
@@ -125,6 +125,7 @@ export const load: PageServerLoad = async (event) => {
   }
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Fixing...
 async function generateCachedEntry(
   id: string,
   notionId: string,
@@ -136,16 +137,14 @@ async function generateCachedEntry(
   let postBlocks: TNRes<
     'block',
     {
-      // biome-ignore lint/style/useNamingConvention: Notion's convention
       has_children: boolean
       object: 'block'
       parent: {
-        // biome-ignore lint/style/useNamingConvention: Notion's convention
         page_id: string
         type: 'page_id'
       }
     } & (
-      TNBCode<'typescript'>
+      | TNBCode<'typescript'>
       | TNBHeading<1>
       | TNBHeading<2>
       | TNBHeading<3>
@@ -160,7 +159,7 @@ async function generateCachedEntry(
     logger.info('checking existing blobs for current page')
     blobList = await blobStore.list(id)
     // TODO: check updated time
-    blobList.blobs = blobList.blobs.filter(b => !b.key.endsWith(id))
+    blobList.blobs = blobList.blobs.filter((b) => !b.key.endsWith(id))
     logger.success(`found ${blobList.blobs.length} blobs`)
   } catch (e) {
     logger.error('failed to fetch blobs list')
@@ -206,7 +205,7 @@ async function generateCachedEntry(
 
     try {
       logger.info('downloading post cover')
-      coverImg = await wretch(postInfo.cover.file.url).get().arrayBuffer()
+      coverImg = await MWretch(postInfo.cover.file.url).get().arrayBuffer()
       logger.success(`fetched image of size ${coverImg.byteLength} bytes`)
     } catch (e) {
       logger.error('failed to fetch cover')
@@ -224,7 +223,7 @@ async function generateCachedEntry(
 
     try {
       logger.info('calculating cover size')
-      coverSize = imageSize(new Uint8Array(coverImg))
+      coverSize = MImageSize(new Uint8Array(coverImg))
       if (!(coverSize.height && coverSize.width)) {
         logger.error('height or width is invalid')
         throw new Error('height or width is invalid')
@@ -241,6 +240,7 @@ async function generateCachedEntry(
   }
 
   const blocks = (await Promise.all(
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Fixing...
     postBlocks.results.map(async (block) => {
       logger.info(`processing block ${block.id} of type ${block.type}`)
 
@@ -292,7 +292,7 @@ async function generateCachedEntry(
 
         try {
           logger.info('fetching image')
-          img = await wretch(block.image.file.url).get().arrayBuffer()
+          img = await MWretch(block.image.file.url).get().arrayBuffer()
           logger.success(`fetched image of size ${img.byteLength} bytes`)
         } catch (e) {
           logger.error('failed to fetch image')
@@ -310,7 +310,7 @@ async function generateCachedEntry(
 
         try {
           logger.info('calculating image size')
-          size = imageSize(new Uint8Array(img))
+          size = MImageSize(new Uint8Array(img))
           if (!(size.height && size.width)) {
             logger.error('height or width is invalid')
             throw new Error('height or width is invalid')

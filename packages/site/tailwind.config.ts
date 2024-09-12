@@ -1,6 +1,6 @@
-import type {Config} from 'tailwindcss'
-import plugin from 'tailwindcss/plugin'
-import type {PluginAPI} from 'tailwindcss/types/config'
+import type { Config } from 'tailwindcss'
+import MPlugin from 'tailwindcss/plugin'
+import type { PluginAPI } from 'tailwindcss/types/config'
 export default {
   content: ['./src/**/*.{html,svelte}'],
   corePlugins: {
@@ -186,7 +186,7 @@ export default {
   },
   plugins: [
     /* animate-delay */
-    plugin((p: PluginAPI) => {
+    MPlugin((p: PluginAPI) => {
       p.matchUtilities(
         {
           'animate-delay': (v) => {
@@ -202,7 +202,7 @@ export default {
       )
     }),
     /* animate-duration */
-    plugin((p: PluginAPI) => {
+    MPlugin((p: PluginAPI) => {
       p.matchUtilities(
         {
           'animate-duration': (v) => {
@@ -217,7 +217,7 @@ export default {
       )
     }),
     /* animate-fil-mode */
-    plugin((p: PluginAPI) => {
+    MPlugin((p: PluginAPI) => {
       p.matchUtilities(
         {
           'animate-fill': (v) => {
@@ -234,7 +234,7 @@ export default {
       )
     }),
     /* animate-name */
-    plugin((p: PluginAPI) => {
+    MPlugin((p: PluginAPI) => {
       p.matchUtilities(
         {
           'animate-name': (v) => {
@@ -256,7 +256,7 @@ export default {
       )
     }),
     /* animate-timing-function */
-    plugin((p: PluginAPI) => {
+    MPlugin((p: PluginAPI) => {
       p.matchUtilities(
         {
           'animate-ease': (v) => {
@@ -271,7 +271,7 @@ export default {
       )
     }),
     /* pointer-events */
-    plugin((p: PluginAPI) => {
+    MPlugin((p: PluginAPI) => {
       p.matchUtilities(
         {
           'pointer-events': (v) => {
@@ -286,7 +286,7 @@ export default {
       )
     }),
     /* transform-box */
-    plugin((p: PluginAPI) => {
+    MPlugin((p: PluginAPI) => {
       p.addUtilities({
         '.transform-box-border': {
           'transform-box': 'border-box'

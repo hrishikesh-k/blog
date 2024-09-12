@@ -1,10 +1,10 @@
-import type {Adapter, Builder} from '@sveltejs/kit'
-import {bundleEdgeFunction, HLogger} from '@hrishikeshk/utils'
-import type {Config as EdgeFunctionsConfig} from '@netlify/edge-functions'
-import type {Config as FunctionsConfig} from '@netlify/functions'
-import {cwd} from 'node:process'
-import {join, relative} from 'node:path'
-import {writeFileSync} from 'node:fs'
+import { writeFileSync } from 'node:fs'
+import { join, relative } from 'node:path'
+import { cwd } from 'node:process'
+import { HLogger, bundleEdgeFunction } from '@hrishikeshk/utils'
+import type { Config as MEdgeFunctionsConfig } from '@netlify/edge-functions'
+import type { Config as MFunctionsConfig } from '@netlify/functions'
+import type { Adapter, Builder } from '@sveltejs/kit'
 
 const fnName = 'SvelteKit Server'
 const generator = '@hrishikeshk/sveltekit-adapter-netlify@0.0.1'
@@ -88,7 +88,7 @@ async function init(builder: Builder) {
 
 export function adapterNetlifyEdgeFunctions(
   options: Partial<
-    Pick<EdgeFunctionsConfig, 'excludedPath' | 'onError' | 'rateLimit'>
+    Pick<MEdgeFunctionsConfig, 'excludedPath' | 'onError' | 'rateLimit'>
   > = {}
 ) {
   return {
@@ -210,7 +210,7 @@ export const config = {
 }
 
 export function adapterNetlifyFunctions(
-  options: Partial<Pick<FunctionsConfig, 'excludedPath' | 'rateLimit'>> = {}
+  options: Partial<Pick<MFunctionsConfig, 'excludedPath' | 'rateLimit'>> = {}
 ) {
   return {
     async adapt(builder) {

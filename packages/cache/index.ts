@@ -1,7 +1,7 @@
-import {argv, cwd, env, exit} from 'node:process'
-import {bindOpts} from '@netlify/cache-utils'
-import {HLogger} from '@hrishikeshk/utils'
-import {join} from 'node:path'
+import { join } from 'node:path'
+import { argv, cwd, env, exit } from 'node:process'
+import { HLogger } from '@hrishikeshk/utils'
+import { bindOpts } from '@netlify/cache-utils'
 
 const action = argv[2].slice(2)
 const allowedActions = ['restore', 'save'] as const

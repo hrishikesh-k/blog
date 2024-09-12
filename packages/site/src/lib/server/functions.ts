@@ -1,17 +1,19 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { env } from 'node:process'
+import type { HLogger } from '@hrishikeshk/utils'
+import MImageSize from 'image-size'
+import type { ISizeCalculationResult } from 'image-size/dist/types/interface.d.ts'
+import MWretch from 'wretch'
+import { slugify } from '~/lib/functions.ts'
 import {
+  HBlob,
   allPostsCacheFile,
   cacheDir,
-  HBlob,
   notion
 } from '~/lib/server/constants.ts'
-import {env} from 'node:process'
-import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs'
-import {HLogger} from '@hrishikeshk/utils'
-import {slugify} from '~/lib/functions.ts'
-import type {TNPageInfo, TNRes} from '~/lib/types.ts'
-import wretch from 'wretch'
+import type { TNPageInfo, TNRes } from '~/lib/types.ts'
 
-export async function load_all_posts(logger: HLogger): Promise<{
+export async function loadAllPosts(logger: HLogger): Promise<{
   deploy_id: string
   posts: Array<{
     description: string
@@ -19,12 +21,11 @@ export async function load_all_posts(logger: HLogger): Promise<{
     id: string
     notion_id: string
     slug: string
-    tags: Array<'Functions'>
+    tags: 'Functions'[]
     title: string
     updated_at: string
   }>
 }> {
-
   /*
     if cacheDir doesn't exist:
       - attempt to create it
@@ -63,17 +64,17 @@ export async function load_all_posts(logger: HLogger): Promise<{
   if (existsSync(allPostsCacheFile)) {
     try {
       logger.info(`${allPostsCacheFile} exists, reading from cache`)
-      const all_post_cache: Awaited<ReturnType<typeof load_all_posts>> = JSON.parse(
+      const allPostCache: Awaited<ReturnType<typeof loadAllPosts>> = JSON.parse(
         readFileSync(allPostsCacheFile, {
           encoding: 'utf-8'
         })
       )
-      logger.success(`read ${all_post_cache.posts.length} posts from cache`)
-      if (env['DEPLOY_ID'] === all_post_cache.deploy_id) {
+      logger.success(`read ${allPostCache.posts.length} posts from cache`)
+      if (env.DEPLOY_ID === allPostCache.deploy_id) {
         logger.success(
           'current deploy matches the cached data, re-using the cache'
         )
-        return all_post_cache
+        return allPostCache
       }
       logger.warn(
         'current deploy and cache does not match, re-fetching the data'
@@ -84,106 +85,96 @@ export async function load_all_posts(logger: HLogger): Promise<{
     }
   }
 
-  let all_posts_from_notion: TNRes<
-    'page_or_database',
-    TNPageInfo
-  >
+  let allPostsFromNotion: TNRes<'page_or_database', TNPageInfo>
 
   /*
     fetch data from Notion and parse it as JSON, throw error if failed
   */
   try {
     logger.info('fetching entries')
-    all_posts_from_notion = await notion
+    allPostsFromNotion = await notion
       .post(null, '/databases/ee93ad0cead84102868aae5665d8d2d1/query')
       .json()
-    logger.success(
-      `fetched ${all_posts_from_notion.results.length} total entries`
-    )
+    logger.success(`fetched ${allPostsFromNotion.results.length} total entries`)
   } catch (e) {
     logger.error('failed to fetch entries')
     throw e
   }
 
-  const all_posts_filtered = {
-    deploy_id: env['DEPLOY_ID']!,
-    posts: await Promise.all(all_posts_from_notion.results
-      .filter(
-        (p) =>
-          !p.archived &&
-          !p.in_trash &&
-          p.properties.Status.status.name === 'Published'
-      ).map(async p => {
-        const id = p.id.slice(0, 8)
-  
-        let cover_img: ArrayBuffer
-        let cover_size: ISizeCalculationResult
-  
-        try {
-          logger.info('downloading post cover')
-          cover_img = await wretch(p.cover!.file.url).get().arrayBuffer()
-          logger.success(`fetched image of size ${cover_img.byteLength} bytes`)
-        } catch (e) {
-          logger.error('failed to fetch cover')
-          throw e
-        }
-  
-        const blob_store = new HBlob('img')
-  
-        try {
-          logger.info('uploading cover to blobs')
-          await blob_store.set(`${id}/${id}`, cover_img)
-          logger.success('cover uploaded')
-        } catch (e) {
-          logger.error('failed to upload cover')
-          throw e
-        }
-  
-        try {
-          logger.info('calculating image size')
-          cover_size = imageSize(new Uint8Array(cover_img))
-          if (!cover_size.height || !cover_size.width) {
-            logger.error('height or width is invalid')
-            throw new Error('height or width is invalid')
+  const allPostsFiltered = {
+    deploy_id: env.DEPLOY_ID,
+    posts: await Promise.all(
+      allPostsFromNotion.results
+        .filter(
+          (p) =>
+            !(p.archived || p.in_trash) &&
+            p.properties.Status.status.name === 'Published'
+        )
+        .map(async (p) => {
+          const id = p.id.slice(0, 8)
+
+          let coverImg: ArrayBuffer
+          let coverSize: ISizeCalculationResult
+
+          try {
+            logger.info('downloading post cover')
+            // TODO: cover
+            coverImg = await MWretch(p.cover?.file.url).get().arrayBuffer()
+            logger.success(`fetched image of size ${coverImg.byteLength} bytes`)
+          } catch (e) {
+            logger.error('failed to fetch cover')
+            throw e
           }
-        } catch (e) {
-          logger.error('failed to calculate image size')
-          throw e
-        }
-  
-        return {
-          description: p.properties.Description.rich_text[0].plain_text,
-          featured: p.properties.Featured.checkbox,
-          id,
-          notion_id: p.id,
-          slug: slugify(p.properties.Title.title[0].plain_text),
-          tags: p.properties.Tags.multi_select.map((t) => t.name),
-          title: p.properties.Title.title[0].plain_text,
-          updated_at: p.last_edited_time
-        }
-        
-      }))
+
+          const blobStore = new HBlob('img')
+
+          try {
+            logger.info('uploading cover to blobs')
+            await blobStore.set(`${id}/${id}`, coverImg)
+            logger.success('cover uploaded')
+          } catch (e) {
+            logger.error('failed to upload cover')
+            throw e
+          }
+
+          try {
+            logger.info('calculating image size')
+            coverSize = MImageSize(new Uint8Array(coverImg))
+            if (!(coverSize.height && coverSize.width)) {
+              logger.error('height or width is invalid')
+              throw new Error('height or width is invalid')
+            }
+          } catch (e) {
+            logger.error('failed to calculate image size')
+            throw e
+          }
+
+          return {
+            description: p.properties.Description.rich_text[0].plain_text,
+            featured: p.properties.Featured.checkbox,
+            id,
+            notion_id: p.id,
+            slug: slugify(p.properties.Title.title[0].plain_text),
+            tags: p.properties.Tags.multi_select.map((t) => t.name),
+            title: p.properties.Title.title[0].plain_text,
+            updated_at: p.last_edited_time
+          }
+        })
+    )
   }
 
   try {
     logger.info(
-      `writing ${all_posts_filtered.posts.length} filtered entries to ${allPostsCacheFile}`
+      `writing ${allPostsFiltered.posts.length} filtered entries to ${allPostsCacheFile}`
     )
-    writeFileSync(allPostsCacheFile, JSON.stringify(all_posts_filtered), {
+    writeFileSync(allPostsCacheFile, JSON.stringify(allPostsFiltered), {
       encoding: 'utf-8'
     })
     logger.success(`${allPostsCacheFile} wrote successfully`)
   } catch (e) {
-    logger.error(
-      `failed to write ${allPostsCacheFile} or encode data as JSON`
-    )
+    logger.error(`failed to write ${allPostsCacheFile} or encode data as JSON`)
     throw e
   }
 
-  return all_posts_filtered
-
-}
-
-export async function load_image_and_compute_size() {
-
+  return allPostsFiltered
 }

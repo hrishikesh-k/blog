@@ -1,26 +1,17 @@
 <script lang="ts">
-  // biome-ignore lint/correctness/noUnusedImports: Svelte support
-  import CIcon from '~/components/c-icon.svelte'
-  import {cva} from 'class-variance-authority'
-  import type {TCIconName} from '~/lib/types.ts'
-  // biome-ignore lint/style/useConst: Svelte support
-  export let element : 'div' | null = null
-  // biome-ignore lint/style/useConst: Svelte support
-  export let icon : TCIconName = ''
-  // biome-ignore lint/style/useConst: Svelte support
-  export let label = ''
-  // biome-ignore lint/style/useConst: Svelte support
-  export let link = ''
-  // biome-ignore lint/style/useConst: Svelte support
-  export let intent :'filled' | 'ghost' = 'ghost'
-  // biome-ignore lint/style/useConst: Svelte support
-  export let size : 'md' | 'sm' = 'md'
-  // biome-ignore lint/style/useConst: Svelte support
-  export let title = ''
-  // biome-ignore lint/style/useConst: Svelte support
-  export let type : 'button' | 'reset' | 'submit' = 'button'
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  const btnClass = cva([
+import { cva } from 'class-variance-authority'
+import CIcon from '~/components/c-icon.svelte'
+import type { TCIconName } from '~/lib/types.ts'
+export let element: 'div' | null = null
+export let icon: TCIconName = ''
+export let label = ''
+export let link = ''
+export let intent: 'filled' | 'ghost' = 'ghost'
+export let size: 'md' | 'sm' = 'md'
+export let title = ''
+export let type: 'button' | 'reset' | 'submit' = 'button'
+const btnClass = cva(
+  [
     'border-0',
     'box-border',
     'cursor-pointer',
@@ -35,27 +26,23 @@
     'min-w-8',
     'no-underline',
     'text-inherit'
-  ], {
-    compoundVariants: [{
-      class: [
-        'hover:after:scale-100'
-      ],
-      intent: 'ghost',
-      size: 'md'
-    }, {
-      class: [
-        'hover:after:scale-x-100'
-      ],
-      intent: 'ghost',
-      size: 'sm'
-    }],
+  ],
+  {
+    compoundVariants: [
+      {
+        class: ['hover:after:scale-100'],
+        intent: 'ghost',
+        size: 'md'
+      },
+      {
+        class: ['hover:after:scale-x-100'],
+        intent: 'ghost',
+        size: 'sm'
+      }
+    ],
     variants: {
       intent: {
-        filled: [
-          'bg-sky-800',
-          'p-1.5',
-          'rounded'
-        ],
+        filled: ['bg-sky-800', 'p-1.5', 'rounded'],
         ghost: [
           'after:absolute',
           'after:duration-300',
@@ -74,30 +61,24 @@
         ]
       },
       size: {
-        md: [
-          'font-bold'
-        ],
-        sm: [
-          'font-semibold',
-          'p-1',
-          'text-sm'
-        ]
+        md: ['font-bold'],
+        sm: ['font-semibold', 'p-1', 'text-sm']
       }
     }
-  })
-  // biome-ignore lint/correctness/noUnusedVariables: Svelte support
-  let linkExternal = false
-  let props : {
-    'aria-label'? : string
-    href? : string
-    rel? : 'noopener noreferrer'
-    target? : '_blank'
-    type? : typeof type
-  } = {}
-  $: {
-    const computedProps : typeof props = {}
+  }
+)
+let linkExternal = false
+let props: {
+  'aria-label'?: string
+  href?: string
+  rel?: 'noopener noreferrer'
+  target?: '_blank'
+  type?: typeof type
+} = {}
+$: {
+  const computedProps: typeof props = {}
 
-    /*
+  /*
       check the length of the link prop
       if length (if length is 0, it will be false)
         if yes, it is a link
@@ -115,41 +96,41 @@
           check if element prop is provided
             if yes, don't set the type of the button
       */
-    if (link.length) {
-      computedProps.href = link
-      if (link.startsWith('/')) {
-        linkExternal = false
-      } else {
-        linkExternal = true
-        computedProps.rel = 'noopener noreferrer'
-        computedProps.target = '_blank'
-      }
-    } else if (!element) {
-      computedProps.type = type
+  if (link.length) {
+    computedProps.href = link
+    if (link.startsWith('/')) {
+      linkExternal = false
+    } else {
+      linkExternal = true
+      computedProps.rel = 'noopener noreferrer'
+      computedProps.target = '_blank'
     }
+  } else if (!element) {
+    computedProps.type = type
+  }
 
-    /*
+  /*
       if element, label and title props are not provided, but icon is provided
         complain that title prop must also be provided
         this is because, if title is not provided,
         the component will render a link/button with an icon,
         but without any text, causing aria issues
       */
-    if (!element && icon.length && !label.length && !title.length) {
-      throw new Error('title must be supplied')
-    }
+  if (!element && icon.length && !label.length && !title.length) {
+    throw new Error('title must be supplied')
+  }
 
-    /*
+  /*
       if element and label prop is not provided, set the aria-label attr
         if element prop is provided, it would be a div which should not have this attr
         if label is provided, the button/link already has a label, so attr not required
      */
-    if (!(element || label.length)) {
-      computedProps['aria-label'] = title
-    }
-
-    props = computedProps
+  if (!(element || label.length)) {
+    computedProps['aria-label'] = title
   }
+
+  props = computedProps
+}
 </script>
 <svelte:element class={btnClass({
   intent,

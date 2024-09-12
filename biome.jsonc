@@ -1,0 +1,139 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "quoteStyle": "single"
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "files": {
+    "ignore": [
+      "**/.netlify/**",
+      "**/.svelte-kit/**",
+      "**/.turbo/**",
+      "**/build/**",
+      "**/dist/**"
+    ],
+    "include": ["**/packages/**/*"]
+  },
+  "formatter": {
+    "indentStyle": "space"
+  },
+  "javascript": {
+    "formatter": {
+      "bracketSameLine": true,
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "trailingCommas": "none"
+    }
+  },
+  "json": {
+    "parser": {
+      "allowTrailingCommas": false
+    }
+  },
+  "linter": {
+    "rules": {
+      "all": true,
+      "style": {
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "conventions": [
+              {
+                "formats": ["PascalCase"],
+                "match": "H(.*)",
+                "selector": {
+                  "kind": "class"
+                }
+              },
+              {
+                "formats": ["PascalCase"],
+                "match": "(?:C|M|P(?:SVG)?)(.*)",
+                "selector": {
+                  "kind": "importAlias"
+                }
+              },
+              {
+                "formats": ["camelCase", "snake_case"],
+                "selector": {
+                  "kind": "objectLiteralMethod"
+                }
+              },
+              {
+                "formats": ["camelCase", "snake_case"],
+                "selector": {
+                  "kind": "objectLiteralProperty"
+                }
+              },
+              {
+                "formats": ["PascalCase"],
+                /* 
+                https://regex101.com/r/p5W0LX/1
+                TODO: https://regex101.com/r/p5W0LX/2
+              */
+                "match": "T(?:C|(?:NB?))(.*)",
+                "selector": {
+                  "kind": "typeAlias"
+                }
+              },
+              {
+                "formats": ["PascalCase", "snake_case"],
+                "selector": {
+                  "kind": "typeProperty"
+                }
+              }
+            ],
+            "requireAscii": true
+          }
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "include": ["**/packages/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/*.svelte"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUndeclaredVariables": "off",
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          },
+          "style": {
+            "useConst": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": [
+        "**/packages/site/deno/**",
+        "**/postcss.config.js",
+        "**/svelte.config.js",
+        "**/tailwind.config.ts",
+        "**/vite.config.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    }
+  ]
+}
