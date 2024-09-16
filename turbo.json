@@ -29,11 +29,21 @@
     },
     "@hrishikeshk/image#build": {
       "cache": false,
-      "dependsOn": ["@hrishikeshk/site#sync"]
+      "dependsOn": ["@hrishikeshk/lint#lint"]
     },
     "@hrishikeshk/image#generate": {
       "cache": false,
       "dependsOn": ["@hrishikeshk/image#build"]
+    },
+    "@hrishikeshk/lint#build": {
+      "cache": false,
+      "dependsOn": ["@hrishikeshk/site#sync"]
+    },
+    "@hrishikeshk/lint#lint": {
+      "cache": false,
+      "dependsOn": [
+        "@hrishikeshk/lint#build"
+      ]
     },
     "@hrishikeshk/site#build": {
       "cache": false,

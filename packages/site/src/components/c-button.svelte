@@ -96,7 +96,7 @@ $: {
           check if element prop is provided
             if yes, don't set the type of the button
       */
-  if (link.length) {
+  if (link.length > 0) {
     computedProps.href = link
     if (link.startsWith('/')) {
       linkExternal = false
@@ -116,7 +116,7 @@ $: {
         the component will render a link/button with an icon,
         but without any text, causing aria issues
       */
-  if (!element && icon.length && !label.length && !title.length) {
+  if (!element && icon.length > 0 && label.length === 0 && title.length === 0) {
     throw new Error('title must be supplied')
   }
 
@@ -125,7 +125,7 @@ $: {
         if element prop is provided, it would be a div which should not have this attr
         if label is provided, the button/link already has a label, so attr not required
      */
-  if (!(element || label.length)) {
+  if (!(element || label.length > 0)) {
     computedProps['aria-label'] = title
   }
 

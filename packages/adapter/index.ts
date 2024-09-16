@@ -10,10 +10,10 @@ const fnName = 'SvelteKit Server'
 const generator = '@hrishikeshk/sveltekit-adapter-netlify@0.0.1'
 const logger = new HLogger(generator)
 const workingDir = cwd()
-const ntlFrameworksApiDir = join(workingDir, '.netlify/v1')
+const ntlFrameworksApiDir = join(workingDir, '.netlify', 'v1')
 const ntlEdgeFunctionsDir = join(ntlFrameworksApiDir, 'edge-functions')
 const ntlFunctionsDir = join(ntlFrameworksApiDir, 'functions')
-const skServerDir = join(workingDir, '.svelte-kit/netlify')
+const skServerDir = join(workingDir, '.svelte-kit', 'netlify')
 const skEdgeFunctionPath = join(ntlEdgeFunctionsDir, 'sk-server.js')
 const skFunctionPath = join(ntlFunctionsDir, 'sk-server.js')
 
@@ -273,11 +273,11 @@ export function adapterNetlifyStatic() {
   return {
     async adapt(builder) {
       const dynamicRoutes = builder.routes.filter((r) => !r.prerender)
-      if (dynamicRoutes.length) {
+      if (dynamicRoutes.length > 0) {
         logger.error(
           `${generator} found the following dynamic routes:${dynamicRoutes.map((r) => `\n  - ${join(relative(workingDir, builder.config.kit.files.routes), r.id)}`)}`
         )
-        throw new Error('')
+        throw new Error('dynamic routes found')
       }
       builder.generateEnvModule()
       await init(builder)

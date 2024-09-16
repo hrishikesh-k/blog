@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@hrishikeshk/utils": "*"
+  },
+  "name": "@hrishikeshk/lint",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "lint": "node ./dist/index.js"
+  },
+  "type": "module",
+  "version": "0.0.1"
+}

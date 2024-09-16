@@ -1,6 +1,6 @@
-import type { c_icons } from '~/lib/constants.ts'
+import type { C_ICONS } from '~/lib/constants.ts'
 
-export type TCIconName = keyof typeof c_icons | ''
+export type TCIconName = keyof typeof C_ICONS | ''
 
 export type TNBCode<T extends string> = TNBText<'code'> & {
   caption: TNText[]

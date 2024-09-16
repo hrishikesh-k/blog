@@ -1,6 +1,7 @@
 import { builtinModules } from 'node:module'
 import MChalk from 'chalk'
 import { build } from 'esbuild'
+import {cwd} from 'node:process'
 
 export async function bundleEdgeFunction(input: string, output: string) {
   await build({
@@ -40,3 +41,5 @@ export class HLogger {
     console.warn(MChalk.yellow(`${this.prefix}: ${msg}`))
   }
 }
+
+export const rootDir = cwd().replace(/\/packages\/.*$/, '')

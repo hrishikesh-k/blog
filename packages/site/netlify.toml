@@ -1,6 +1,6 @@
 [build]
   command = "turbo run @hrishikeshk/site#deploy"
-  publish = "/packages/site/build"
+  publish = "./packages/site/build/"
 
 [dev]
   command = "turbo run @hrishikeshk/site#dev"

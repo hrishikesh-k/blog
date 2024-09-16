@@ -1,22 +1,22 @@
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { cwd } from 'node:process'
-import { HLogger } from '@hrishikeshk/utils'
+import { HLogger, rootDir } from '@hrishikeshk/utils'
 
 const logger = new HLogger('@hrishikeshk/archive')
 const workingDir = cwd()
 
-const adapterDistDir = join(workingDir, '../adapter/dist')
+const adapterDistDir = join(rootDir, 'adapter', 'dist')
 const archiveDistDir = join(workingDir, 'dist')
-const cacheDistDir = join(workingDir, '../cache/dist')
-const imageDistDir = join(workingDir, '../image/dist')
-const siteBuildDir = join(workingDir, '../site/build')
-const siteNetlifyCacheDir = join(workingDir, '../site/.netlify')
-const siteNetlifyCliBugDir = join(workingDir, '../site/packages')
-const siteNodeModulesDir = join(workingDir, '../site/node_modules')
-const siteSvelteKitCacheDir = join(workingDir, '../site/.svelte-kit')
-const turboCacheDir = join(workingDir, '../../.turbo')
-const utilsDistDir = join(workingDir, '../utils/dist')
+const cacheDistDir = join(rootDir, 'cache', 'dist')
+const imageDistDir = join(rootDir, 'image', 'dist')
+const siteBuildDir = join(rootDir, 'site', 'build')
+const siteNetlifyCacheDir = join(rootDir, 'site', '.netlify')
+const siteNetlifyCliBugDir = join(rootDir, 'site', 'packages')
+const siteNodeModulesDir = join(rootDir, 'site', 'node_modules')
+const siteSvelteKitCacheDir = join(rootDir, 'site', '.svelte-kit')
+const turboCacheDir = join(rootDir, '.turbo')
+const utilsDistDir = join(rootDir, 'utils', 'dist')
 
 const dirsToDelete = [
   adapterDistDir,

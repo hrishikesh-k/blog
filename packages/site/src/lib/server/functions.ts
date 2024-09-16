@@ -102,7 +102,7 @@ export async function loadAllPosts(logger: HLogger): Promise<{
   }
 
   const allPostsFiltered = {
-    deploy_id: env.DEPLOY_ID,
+    deploy_id: env.DEPLOY_ID || 'unknown',
     posts: await Promise.all(
       allPostsFromNotion.results
         .filter(

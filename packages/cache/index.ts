@@ -1,12 +1,18 @@
 import { join } from 'node:path'
-import { argv, cwd, env, exit } from 'node:process'
-import { HLogger } from '@hrishikeshk/utils'
+import { argv, env, exit } from 'node:process'
+import { HLogger, rootDir } from '@hrishikeshk/utils'
 import { bindOpts } from '@netlify/cache-utils'
 
 const action = argv[2].slice(2)
 const allowedActions = ['restore', 'save'] as const
 const logger = new HLogger('@hrishikeshk/cache')
-const svelteKitCacheDir = join(cwd(), '../site/.svelte-kit/cache')
+const svelteKitCacheDir = join(
+  rootDir,
+  'packages',
+  'site',
+  '.svelte-kit',
+  'cache'
+)
 
 /* @ts-ignore: https://github.com/microsoft/TypeScript/issues/26255 */
 if (!allowedActions.includes(action)) {

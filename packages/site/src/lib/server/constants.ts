@@ -4,7 +4,7 @@ import MWretch from 'wretch'
 import MWretchQueryStringAddon from 'wretch/addons/queryString'
 import type { TNBlobList } from '~/lib/types.ts'
 
-export const cacheDir = join(cwd(), '.svelte-kit/cache')
+export const cacheDir = join(cwd(), '.svelte-kit', 'cache')
 export const allPostsCacheFile = join(cacheDir, 'all_posts.json')
 
 export class HBlob {
