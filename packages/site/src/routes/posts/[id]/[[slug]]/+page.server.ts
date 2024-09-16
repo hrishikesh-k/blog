@@ -24,7 +24,7 @@ import type {
   TNPage,
   TNRes
 } from '~/lib/types.ts'
-import type { EntryGenerator, PageServerLoad } from './$types'
+import type { EntryGenerator, PageServerLoad } from './$types.ts'
 
 const logger = new HLogger('/posts/[id]/[[slug]]/+page.server.ts')
 
@@ -166,7 +166,7 @@ async function generateCachedEntry(
     throw e
   }
 
-  if (blobList.blobs.length) {
+  if (blobList.blobs.length > 0) {
     for (const blob of blobList.blobs) {
       try {
         logger.warn(`deleting blobs ${blob.key} as it's likely stale`)
@@ -331,7 +331,7 @@ async function generateCachedEntry(
       }
 
       if ('paragraph' in block) {
-        if (block.paragraph.rich_text.length) {
+        if (block.paragraph.rich_text.length > 0) {
           return {
             id: block.id.slice(0, 8),
             notion_id: block.id,

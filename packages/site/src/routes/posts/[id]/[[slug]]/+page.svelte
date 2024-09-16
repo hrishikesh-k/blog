@@ -3,7 +3,7 @@ import { page } from '$app/stores'
 import CNotionCode from '~/components/c-notion-code.svelte'
 import CNotionHeading from '~/components/c-notion-heading.svelte'
 import CNotionImage from '~/components/c-notion-image.svelte'
-import type { PageData } from './$types'
+import type { PageData } from './$types.ts'
 export let data: PageData
 </script>
 <svelte:head>

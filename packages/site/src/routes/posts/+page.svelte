@@ -2,7 +2,7 @@
 import { format } from 'date-fns'
 import CButton from '~/components/c-button.svelte'
 import CIcon from '~/components/c-icon.svelte'
-import type { PageData } from './$types'
+import type { PageData } from './$types.ts'
 export let data: PageData
 </script>
 <svelte:head>

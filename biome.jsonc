@@ -34,6 +34,10 @@
   "linter": {
     "rules": {
       "all": true,
+      "correctness": {
+        // https://github.com/biomejs/biome/issues/2010
+        "noUndeclaredDependencies": "off"
+      },
       "style": {
         "useNamingConvention": {
           "level": "warn",
@@ -96,6 +100,16 @@
         "rules": {
           "correctness": {
             "noNodejsModules": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["**/packages/utils/index.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
           }
         }
       }

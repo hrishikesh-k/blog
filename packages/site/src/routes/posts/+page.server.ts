@@ -1,6 +1,6 @@
 import { HLogger } from '@hrishikeshk/utils'
 import { loadAllPosts } from '~/lib/server/functions.ts'
-import type { PageServerLoad } from './$types'
+import type { PageServerLoad } from './$types.ts'
 
 export const load: PageServerLoad = async () => {
   const logger = new HLogger('/posts/+page.server.ts')

@@ -86,6 +86,8 @@ async function init(builder: Builder) {
   }
 }
 
+const pathRegex = /[A-Za-z]/
+
 export function adapterNetlifyEdgeFunctions(
   options: Partial<
     Pick<MEdgeFunctionsConfig, 'excludedPath' | 'onError' | 'rateLimit'>
@@ -102,7 +104,7 @@ export function adapterNetlifyEdgeFunctions(
           path
             .split('')
             .map((s) => {
-              if (/[A-Za-z]/.test(s)) {
+              if (pathRegex.test(s)) {
                 return `[${s.toUpperCase()}${s.toLowerCase()}]`
               }
               switch (s) {
