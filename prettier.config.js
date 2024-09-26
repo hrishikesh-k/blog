@@ -16,7 +16,7 @@ const config = {
       }
     }
   ],
-  plugins: ['prettier-plugin-svelte', 'prettier-plugin-tailwindcss'],
+  plugins: ['prettier-plugin-svelte' /* , 'prettier-plugin-tailwindcss' */],
   printWidth: 80,
   proseWrap: 'always',
   quoteProps: 'consistent',
@@ -29,11 +29,11 @@ const config = {
   svelteSortOrder: 'options-scripts-markup-styles',
   svelteStrictMode: true,
   tabWidth: 2,
-  tailwindAttributes: [],
+  /* tailwindAttributes: [],
   tailwindConfig: './packages/site/tailwind.config.ts',
   tailwindFunctions: ['cva'],
   tailwindPreserveDuplicates: false,
-  tailwindPreserveWhitespace: false,
+  tailwindPreserveWhitespace: false, */
   trailingComma: 'none',
   useTabs: false,
   vueIndentScriptAndStyle: true
